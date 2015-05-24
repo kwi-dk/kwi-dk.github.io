@@ -1,0 +1,186 @@
+/*
+ *  "Are you a werewolf"-test
+ */
+
+////// Definitions //////
+
+const me = %#;
+
+wolfTest: thing #14312 has "expert"
+{
+    name = "wolf test;test";
+
+    /*
+     *  If the player picks A, we increase the "o" variable, if B we increase
+     *  the "w" variable. In both cases, we also increase the "q" variable.
+     */
+
+    q1   = "1. My favorite type of insect is a...";
+    q1_a = "Carpenter ant~qo";
+    q1_b = "Wolf spider~qw";
+
+    /*
+     *  Print "To keep a clean-shaved face"/"To keep clean-shaved legs"
+     *  /"To keep clean-shaved" depending on the player's sex.
+     */
+     
+    q2()
+    {
+        "2. To keep ";
+        switch (%s)
+        {
+        case "he": "a clean-shaven face";
+        case "she": "clean-shaved legs";
+        default: "clean-shaved";
+        };
+        ", I have to shave...";
+    };
+    
+    q2_a = "Once a week~q";
+    q2_b = "Occasionally~q";
+    q2_c = 'Once a day~qwm@print("Yeow. ")';
+    q2_d = 'Continuously~qww@print("Yeow! ")';
+
+    q11()
+    {
+        "You are... ";
+        if (.plyw[%#] > 12) "A WOLF!";
+        else "NOT a wolf.";
+    
+        if (.plyo[%#] == 1) " Also, you hate wood.";
+        
+        "%cNot satisfied with your test results?
+         Try again, or mud-mail Kwi!";
+        
+        .plyq[%#] = ""; // Clear question number.
+        
+        tellroom(location(this), me, {
+            "%n has taken the \"Are you a wolf\"-test, and %s is... ";
+            if (.plyw[%#] > 12) "a WOLF! Quick, lynch %o before it's too late!";
+            else "NOT a wolf. (No warranties on the accuracy of this test, though.)";
+        });
+    };
+
+    // Showing the question
+    showq()
+    {
+        let "q" = .plyq[%#];
+        
+        this.q[%q](); // Call question text.
+
+        //  Note that the choices appear in alphabetic order only
+        //  through some kind of sheer luck. :)
+        
+        fieldloop (this by "q%q_")
+        {
+            "%c";
+            uc(substr(%f, strlen("q%q_"), 1)); // Uppercase choice-letter
+            ") ";
+            substr(%v, 0, index(%v, "~")); // Print text up to the "~"
+        };
+    };
+
+    // Handle an answer - %0 holds the answer-letter.
+    handleanswer()
+    {
+        let "x" = .q[.plyq[%#] & "_%0"];
+        {
+            let "i" = index(%x, "~") + 1;
+            let "j" = index(%x, "@");
+            
+            // Now %x holds the entire choice-field,
+            // %i the position of "~" in %x PLUS one,
+            // and %j the position of "@" in the text (or -1 if no @.)
+            
+            // Increment variables
+            strloop ("c" in (%j == -1 ? substr(%x, %i) : substr(%x, %i, %j - %i)))
+            {
+                .ply["%c%#"] = .ply["%c%#"] + 1;
+            };
+            
+            // Execute the JotaCode (if any)
+            if (%j != "") execute(substr(%x, %j));
+            
+            // Confirm the choice, show next question
+            '"'; substr(%x, 0, %i - 1); '" it is.%c';
+            
+            wolfTest.showq();
+        };
+    };
+
+
+    desc_ = "Are YOU a werewolf? Take this short (10 questions) test and find out!
+             We've got to catch those filthy werewolves, after all.%c
+             Based on the original \"Are you a werewolf\" book-object.
+             Mud-mail comments and suggestions to Kwi.%c
+             Obvious Actions: take test";
+
+    description()
+    {
+        let "q" = .plyq[%#];
+        
+        if (%q == "") this.desc_();
+        else
+        {
+            this.showq();
+            "%cObvious Actions: ";
+            
+            fieldloop (this by "q%q_")
+            {
+                "answer ";
+                uc(substr(%f, strlen("q%q_"), 1));
+                ", ";
+            };
+            "start over";
+       };
+   };
+};
+
+action #555 on wolfTest has "dark"
+{
+    name = "take test;test me;start test;start over";
+    success()
+    {
+        "Welcome to the \"Are you a werewolf\"-test! Here comes the first question:%c";
+
+        // Clear old variables for current player:
+        fieldloop (wolfTest by "ply")
+        {
+            if (substr(%f, 4) == %#) wolfTest.[%f] = "";
+        };
+        
+        wolfTest.plyq[%#] = 1;
+
+        // Show full description, including the fake Obvious Actions
+        wolfTest.description();
+    };
+};
+
+action #556 on wolfTest has "dark", "puzzle"
+{
+    name = "answer *";
+
+    // The effect of the code above is that we check if it was a valid choice, and if so, call "handleanswer". 
+    success()
+    {
+        let "q" = wolfTest.plyq[%#];
+        
+        if (%q == "")  // No test in progress?
+        {
+            "I think the command you're looking for is TAKE TEST.%c
+            (The test is unreliable enough as it is,
+             there's no need to answer questions before they're asked.)";
+        };
+        else if (strlen(%0) == 1)
+        {
+            // Player typed exactly one char (E.g. ANSWER B, and not ANSWER SPIDER.)
+            if (wolfTest.q["%q_%0"] == "")
+            {
+                uc(%0); " was not one of the choices.
+                 (LOOK AT TEST if you've forgotten the question.)";
+            };
+            else wolfTest.handleanswer();
+        };
+        else "Sorry, answer what? (Please specify a single letter, as in ANSWER A.)";
+    };
+};

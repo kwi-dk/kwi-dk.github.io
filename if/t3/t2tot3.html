@@ -1,0 +1,888 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>TADS 2 to TADS 3</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 16</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: TADS 2 to TADS 3</div>
+<h1>TADS 2 to TADS 3</h1>
+<p>Here's a list of changes between TADS 2 and 3.</p>
+<p>Note: Occasionally, I refer to the <i>TADS 3 overview</i>. The
+overview is a collection of HTML-pages, which is installed together
+with the T3 Author's Kit.</p>
+<h3>Fundamental changes</h3>
+<ul>
+<li><i>Separate compilation</i><br />
+In TADS 2, you used #include to "paste" all your source files, and
+the library, together.<br />
+In TADS 3, you instead create a "makefile" (project-file) and list
+all your source files in that.<br />
+This way, the compiler only has to compile the source-files that
+has been modified, and that saves a lot of time when you have two
+megabytes of library code. (Yeah, the Adv3 library is big.)<br />
+<br />
+Note that if you use Workbench, you don't even have to mess around
+with makefiles.<br />
+[ <a href="http://www.tads.org/howto/t3inc.htm">Details about
+makefiles</a> ]</li>
+<li><i>HTML-mode</i><br />
+HTML-mode is always enabled in T3. Hence there's no \H+ code. Nor
+can \( and \) be used anymore, instead &lt;B&gt; and &lt;/B&gt;
+should be used.</li>
+</ul>
+<h3>New syntax</h3>
+<ul>
+<li><i>Case-sensitivity and C-syntax</i><br />
+In TADS 2 you had optional case-sensitivity (enabled by default)
+and optional C-like syntax (disabled by default).<br />
+In TADS 3, case sensitivity and C-syntax is mandatory.<br />
+<br />
+<table border="1" cellspacing="0" cellpadding="1" style="width: 75%; font-family: monospace">
+<tr>
+<th style="width: 16%">T2</th>
+<td align="center" style="width: 14%">:=</td>
+<td align="center" style="width: 14%">=</td>
+<td align="center" style="width: 14%">&lt;&gt;</td>
+<td align="center" style="width: 14%">and</td>
+<td align="center" style="width: 14%">or</td>
+<td align="center" style="width: 14%">not</td>
+</tr>
+<tr>
+<th style="width: 16%">T3</th>
+<td align="center" style="width: 14%">=</td>
+<td align="center" style="width: 14%">==</td>
+<td align="center" style="width: 14%">!=</td>
+<td align="center" style="width: 14%">&amp;&amp;</td>
+<td align="center" style="width: 14%">||</td>
+<td align="center" style="width: 14%">!</td>
+</tr>
+</table>
+</li>
+<li><i>self</i><br />
+In TADS 2, you often had to add "self." in front of calls to
+properties on the self object, as in <tt>self.sdesc</tt>. In TADS
+3, you no longer need to do that. Yay!<br />
+<br />
+The only exception is when using property pointers:<br />
+<tt>local foo = &amp;name, myName = self.(foo);</tt></li>
+<li><i>is in, not in</i><br />
+Inform has its <tt>x = 3 or 4 or 5</tt> syntax. TADS 3 has <tt>is
+in</tt> and <tt>not in</tt>.<br />
+<tt>if (x == 3 || x == 4 || x == 5)</tt> can be written <tt>if (x
+is in (3, 4, 5))</tt>.<br />
+If x is an expression, it'll only be evaluated once using <tt>is
+in</tt>.<br />
+<br />
+E.g. this will read a line of input from the user, and check if the
+first character is 'q' or 'Q':<br />
+<tt>if (inputLine().substr(1, 1) is in ('q', 'Q')) { /* ... */
+}</tt><br />
+<br />
+The values don't have to be constants - they can be expressions
+too.<br />
+<tt>if (x not in (foo(), obj.bar)) /* ... */</tt></li>
+<li><i>Just like objects can be modified and replaced, so can
+functions</i><br />
+TADS 2 only allowed you to replace functions, in T3 you can
+<tt>modify</tt> them, then call the original function using
+<tt>replaced()</tt>.</li>
+<li>For a complete list of syntax changes, check the <i>Expressions
+and Operators</i> and <i>Statements</i> chapters of the TADS 3
+overview.</li>
+</ul>
+<h3>Object definition</h3>
+<ul>
+<li><i>Property methods and values</i><br />
+In TADS 3, you should use equal signs for property values, but not
+for property methods.<br />
+The exception is <i>short-hand</i> methods, where you <i>should</i>
+use the equal sign.<br />
+Confused? Look here:
+
+<pre>
+fearsomeWeapon: Thing
+    // Simple values
+    weaponLevel = 12
+    weaponClass = 'Saber of Dood'
+    
+    // A simple method (which prints the description)
+    desc()
+    {
+        "It's a mighty fearsome +12 Saber of Dood";
+
+        // Is the weapon located 'in' the player character?
+
+        if (isIn(gPlayerChar)) ", and it's yours! Mwahaha! ";
+        else ". ";
+    }
+
+    /*
+     *  A short-hand method, which returns '+12 Saber of Dood'
+     *  (unless weaponLevel or weaponClass is changed, of course.)
+     */
+    name = ('+' + weaponLevel + ' ' + weaponClass)
+
+    // The same method written in out in full
+    name2()
+    {
+        return '+' + weaponLevel + ' ' + weaponClass;
+    }
+;
+</pre></li>
+<li><i>Brace-style</i><br />
+You have two styles to choose between when specifying an object.
+The classic, semi-colon terminated syntax:
+
+<p><tt>obj: object<br />
+&nbsp;&nbsp;&nbsp;&nbsp;/* ... */<br />
+;</tt></p>
+
+<p>Or the new C-style brace-syntax:</p>
+
+<p><tt>obj: object<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;/* ... */<br />
+}</tt></p>
+
+<p>It's only a matter of looks. That said, I recommend using the
+semi-colon terminated syntax, as it makes it easier to track down
+syntax errors relating to missing braces.</p>
+</li>
+<li><i>Anonymous objects</i><br />
+You don't have to give an object a name, if you don't refer to the
+object by name anywhere in code:
+
+<pre>
+Me: Actor; // A named object.
+
+Thing // An anonymous object.
+    location = Me
+;
+</pre>
+This gives us an actor and an anonymous object, and locates the
+latter in the actor's inventory.</li>
+<li><i>The +-syntax</i><br />
+You can specify the location of objects using syntax like
+this:<br />
+<br />
+<tt>Me: Actor;<br />
++ myBagA: Openable, Container;<br />
+++ Thing;<br />
+<br />
+myBagB: Openable, Container<br />
+&nbsp;&nbsp;&nbsp;&nbsp;location = Me<br />
+;</tt><br />
+<br />
+myBagA and myBagB are identical - one uses the +-syntax to locate
+itself inside the actor, the other explicitly sets the location
+property. They compile to exactly the same code.<br />
+Finally, we put an anonymous object of the class Thing inside
+myBagA.</li>
+<li><i>Templates</i><br />
+TADS 3 has another nifty feature: Object templates. Have a look at
+this example:
+
+<pre>
+field: OutdoorRoom 'In the middle of field'
+    "You're standing in a broad field of corn. (Etc.)"
+    north = road
+;
+</pre>
+This code compiles to exactly the same thing, but doesn't use
+templates:
+
+<pre>
+field: OutdoorRoom 
+    name = 'In the middle of field'
+    desc = "You're standing in a broad field of corn. (Etc.)"
+    north = road
+;
+</pre></li>
+<li><i>Nested anonymous objects</i><br />
+You can define one object within another. Note that this does
+<i>not</i> set the location of the nested object to the enclosing
+object. Instead, you use nesting objects to assign an anonymous
+object to a property.
+
+<pre>
+myRoom: Room 'Nifty Room'
+    "You can't go south from here. "
+    south = myRoomCantGoSouth
+;
+
+myRoomCantGoSouth: NoTravelMessage
+    travelDesc = "I told you, you can't go south! "
+;
+</pre>
+This shows a message if the player tries to go south. So far, this
+is very verbose compared to the way you'd do that in TADS 2:<br />
+<tt>south = "I told you, you can't go south! "</tt><br />
+<br />
+But using nested anonymous objects, we instead get this:
+
+<pre>
+myRoom: Room 'Nifty Room'
+    "You can't go south from here. "
+    south: NoTravelMessage
+    {
+        travelDesc = "I told you, you can't go south! "
+    }
+;
+</pre>
+We create an anonymous object of class NoTravelMessage and assign
+it to the south property of myRoom. (Also, if you still think the
+code is verbose, don't worry - using templates, it becomes even
+smaller.)<br />
+Nested objects must use the brace-syntax.</li>
+</ul>
+<h3>The TADS 3 Adventure Library</h3>
+<ul>
+<li><i>Renamed classes</i><br />
+Only listing the most important ones here. Also note that a great
+deal of features haven't just been renamed, but have changed
+completely. The elements marked with * have changed a lot.
+<table border="1" cellspacing="0" cellpadding="2">
+<tr>
+<th>TADS 2</th>
+<th>TADS 3</th>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>item / thing</td>
+<td>Thing</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>room</td>
+<td>Room / OutdoorRoom</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>darkroom</td>
+<td>DarkRoom</td>
+<td>Or simply set the <tt>brightness</tt> of the room = 0. Same
+difference.</td>
+</tr>
+<tr>
+<td>nestedroom</td>
+<td>NestedRoom</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>charitem</td>
+<td>Chair</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>beditem</td>
+<td>Bed</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>Actor</td>
+<td>Actor / Person</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>basicMe</td>
+<td>Actor / Person</td>
+<td>Any Actor can be used as player character.</td>
+</tr>
+<tr>
+<td>follower</td>
+<td>-</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>obstacle</td>
+<td>TravelConnector *</td>
+<td>(and subclasses)</td>
+</tr>
+<tr>
+<td>floatingItem</td>
+<td>MultiLoc *</td>
+<td>(and subclasses)</td>
+</tr>
+<tr>
+<td>lightsource</td>
+<td>-</td>
+<td>Use the <tt>brightness</tt> property.</td>
+</tr>
+<tr>
+<td>hiddenItem</td>
+<td>-</td>
+<td>No TADS 3 equivalent.</td>
+</tr>
+<tr>
+<td>fixeditem</td>
+<td>Fixture / Immovable</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>distantItem</td>
+<td>Distant</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>readable</td>
+<td>Readable</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>fooditem</td>
+<td>Food</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>dialItem</td>
+<td>Dial</td>
+<td>(and subclasses)</td>
+</tr>
+<tr>
+<td>switchItem</td>
+<td>Switch</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>decoration</td>
+<td>Decoration</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>buttonitem</td>
+<td>Button</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>clothingItem</td>
+<td>Wearable</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>doorway</td>
+<td>Door *</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>lockableDoorway</td>
+<td>-</td>
+<td>Use <tt>Lockable, Door</tt> as superclasses.</td>
+</tr>
+<tr>
+<td>vehicle</td>
+<td>Vehicle *</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>surface</td>
+<td>Surface</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>container</td>
+<td>Container</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>qsurface / qcontainer</td>
+<td>-</td>
+<td>Set <tt>contentsListed</tt> = nil.</td>
+</tr>
+<tr>
+<td>openable</td>
+<td>OpenableContainer</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>lockable</td>
+<td>LockableContainer</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>keyedLockable</td>
+<td>-</td>
+<td>Use <tt>LockableWithKey, OpenableContainer</tt> as
+superclasses.</td>
+</tr>
+<tr>
+<td>keyItem</td>
+<td>Key</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>seethruItem</td>
+<td>-</td>
+<td>Write your own <tt>dobjFor(LookThrough)</tt> handler.</td>
+</tr>
+<tr>
+<td>transparentItem</td>
+<td>-</td>
+<td>Use a Container and set its <tt>material</tt> =
+<tt>glass</tt>.</td>
+</tr>
+<tr>
+<td>basicNumObj / basicStrObj</td>
+<td>-</td>
+<td>Literals are handled in a completely different way in TADS
+3.</td>
+</tr>
+<tr>
+<td>deepverb etc.</td>
+<td>-</td>
+<td>See <a href="http://www.tads.org/howto/t3verb.htm">this
+article</a> on creating verbs.</td>
+</tr>
+</table>
+</li>
+<li><i>Renamed functions</i><br />
+Note that several functions for handling lists and strings have
+simply been made methods instead. Those methods are: length, car,
+cdr, substr, lower (now "toLower") and upper (now "toUpper").
+
+<p>So instead of length(str), you should write str.length(), and so
+on. Works for constants too. <tt>'Hello'.length()</tt> returns
+5.</p>
+
+<p>All file-handling methods have been moved to the File-class, see
+the appropriate chapter in the overview.</p>
+
+<p>The fuse and daemon system (getfuse, rundaemons, runfuses,
+setdaemon, setfuse, notify, remdaemon, remfuse, unnotify) have been
+completely changed. <a href="#events">See below</a>.</p>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr>
+<th>TADS 2</th>
+<th>TADS 3</th>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>input/inputline</td>
+<td>inputManager.inputLine</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>rand / _rand</td>
+<td>rand</td>
+<td>The TADS 3 random number generator is the same on all
+platforms, and its entropy is excellent.</td>
+</tr>
+<tr>
+<td>scoreFormat</td>
+<td>-</td>
+<td>modify <tt>statusLine</tt> and override
+<tt>showStatusRight()</tt>.</td>
+</tr>
+<tr>
+<td>incscore</td>
+<td>addToScore *</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>switchPlayer</td>
+<td>-</td>
+<td><tt>gPlayerChar = newPlayer; gPlayerChar.lookAround(true,
+nil);</tt></td>
+</tr>
+<tr>
+<td>isclass</td>
+<td>obj.ofKind(class)</td>
+<td>You need to ensure that obj is an object, first.</td>
+</tr>
+<tr>
+<td>abort</td>
+<td>throw new TerminateCommandException()</td>
+<td>Note that system-verbs use a different approach.</td>
+</tr>
+<tr>
+<td>exitobj</td>
+<td>exit; / exitAction;</td>
+<td>exitAction runs afterAction etc. exit skips them.</td>
+</tr>
+<tr>
+<td>exit</td>
+<td>-</td>
+<td><tt>gAction.cancelIteration(); exit;</tt></td>
+</tr>
+<tr>
+<td>askdo / askio</td>
+<td>askForDobj(action) / askForIobj(action)</td>
+<td>(See dobjFor(Throw) in thing.t for an example.)</td>
+</tr>
+<tr>
+<td>addword / delword / getwords</td>
+<td>-</td>
+<td>See <a href="#dynvoc">dynamic vocabulary</a>, below.</td>
+</tr>
+<tr>
+<td>askfile</td>
+<td>-</td>
+<td>See the "tads-io Function Set" chapter in the TADS 3
+overview.</td>
+</tr>
+<tr>
+<td>caps</td>
+<td>"\^";</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>clearscreen</td>
+<td>clearScreen</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>cvtnum</td>
+<td>toInteger</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>cvtstr</td>
+<td>toString</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>datatype</td>
+<td>dataType</td>
+<td>The return values have changed. See the "tads-gen Function Set"
+chapter in the overview.</td>
+</tr>
+<tr>
+<td>debugTrace</td>
+<td>-</td>
+<td>Add PARSER_DEBUG to the list of Defines for your project.</td>
+</tr>
+<tr>
+<td>defined</td>
+<td>obj.propDefined</td>
+<td>See the "Object Intrinsic Class" chapter in the overview.</td>
+</tr>
+<tr>
+<td>endCommand</td>
+<td>-</td>
+<td>Use a PromptDaemon.</td>
+</tr>
+<tr>
+<td>execCommand</td>
+<td>executeCommand</td>
+<td>Or you could add the command to the actor's command que using
+addPendingAction.</td>
+</tr>
+<tr>
+<td>find</td>
+<td>lst.indexOf / str.find</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>firstobj / nextobj</td>
+<td>firstObj / nextObj</td>
+<td>Or use forEachInstance (in _main.t).</td>
+</tr>
+<tr>
+<td>firstsc</td>
+<td>obj.getSuperclassList</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>argcount / getarg</td>
+<td>argcount / getArg</td>
+<td>Or use the new variable argument count syntax. See the
+"Statements" chapter in the overview.</td>
+</tr>
+<tr>
+<td>gettime</td>
+<td>getTime</td>
+<td>The optional parameter can be either GetTimeDateAndTime or
+GetTimeTicks.</td>
+</tr>
+<tr>
+<td>incturn</td>
+<td>-</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>inputdialog</td>
+<td>inputDialog</td>
+<td>See the "tads-io Function Set" chapter in the TADS 3
+overview.</td>
+</tr>
+<tr>
+<td>inputevent / inputkey</td>
+<td>inputEvent / inputKey</td>
+<td>Use the appropriate inputManager methods.</td>
+</tr>
+<tr>
+<td>logging</td>
+<td>scriptStatus.scriptFile</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>morePrompt</td>
+<td>inputManager.promptForMore(nil)</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>nocaps</td>
+<td>"\v";</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>objwords</td>
+<td>-</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>outcapture/outhide</td>
+<td>-</td>
+<td>Use a MonitorFilter or StringCaptureFilter.</td>
+</tr>
+<tr>
+<td>parseXXX</td>
+<td>-</td>
+<td>The T3 parser has similar functions.</td>
+</tr>
+<tr>
+<td>parserGetMe</td>
+<td>gPlayerChar</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>parserSetMe</td>
+<td>-</td>
+<td>gPlayerChar = theActor</td>
+</tr>
+<tr>
+<td>parserGetObj</td>
+<td>-</td>
+<td>Use the global vars (gActor, gAction, gDobj, gIobj, etc.)</td>
+</tr>
+<tr>
+<td>parserTokenize</td>
+<td>cmdTokenizer.tokenize</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>parseUnknownVerb</td>
+<td>-</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>postAction</td>
+<td>-</td>
+<td>Use the afterAction of Things or Actions, or the
+BasicLocation's roomAfterAction.</td>
+</tr>
+<tr>
+<td>preCommand</td>
+<td>-</td>
+<td>Use the beforeAction of Things or Actions, or the
+BasicLocation's roomBeforeAction.</td>
+</tr>
+<tr>
+<td>proptype</td>
+<td>obj.proptype</td>
+<td>See the "Object Intrinsic Class" chapter in the overview.</td>
+</tr>
+<tr>
+<td>quit</td>
+<td>-</td>
+<td>Throw a <tt>QuittingException</tt>.</td>
+</tr>
+<tr>
+<td>reSearch, reGetGroup</td>
+<td>rexXXX</td>
+<td>See the "Regular Expressions" chapter in the overview.</td>
+</tr>
+<tr>
+<td>restart</td>
+<td>RestartAction.doRestartGame</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>restore</td>
+<td>RestoreAction.performRestore</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>save</td>
+<td>SaveAction.performSave</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>setit</td>
+<td>gPlayerChar.setIt(obj)</td>
+<td>And setHim(obj) / setHer(obj) / setThem(lst).</td>
+</tr>
+<tr>
+<td>setscore</td>
+<td>-</td>
+<td>See score.t.</td>
+</tr>
+<tr>
+<td>skipturn</td>
+<td>-</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>systemInfo</td>
+<td>Still systemInfo</td>
+<td>But see the "tads-io Function Set" chapter in the TADS 3
+overview.</td>
+</tr>
+<tr>
+<td>undo</td>
+<td>UndoAction.performUndo(nil)</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>verbinfo</td>
+<td>-</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>yorn</td>
+<td>yesOrNo</td>
+<td>Returns true or nil.</td>
+</tr>
+</table>
+<table border="1" cellspacing="0" cellpadding="1">
+<tr>
+<th>TADS 2</th>
+<th>TADS 3</th>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>sdesc</td>
+<td>name</td>
+<td>In T3, this should be a single-quoted string, not a
+double-quoted string.</td>
+</tr>
+<tr>
+<td>ldesc</td>
+<td>desc</td>
+<td>This remains double-quoted, though.</td>
+</tr>
+<tr>
+<td>readdesc</td>
+<td>readDesc</td>
+<td>Double-quoted.</td>
+</tr>
+<tr>
+<td>actorDesc</td>
+<td>actorHereDesc</td>
+<td>Double-quoted.</td>
+</tr>
+<tr>
+<td>noun, adjective, etc.</td>
+<td>vocabWords_ *</td>
+<td>See the T3 sample game.</td>
+</tr>
+<tr>
+<td>doXXX, verDoXXX, etc.</td>
+<td>dobjFor / iobjFor *</td>
+<td>See the T3 sample game.</td>
+</tr>
+<tr>
+<td>isopen</td>
+<td>isOpen *</td>
+<td>To make an object initially open, set <tt>initiallyOpen</tt> =
+true.</td>
+</tr>
+<tr>
+<td>otherside</td>
+<td>otherSide</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>doordest</td>
+<td>destination</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>reachable</td>
+<td>-</td>
+<td>Use the sense system to prevent the player from reaching
+things.</td>
+</tr>
+<tr>
+<td>isThem</td>
+<td>isPlural</td>
+<td>(Still isHim and isHer, though.)</td>
+</tr>
+<tr>
+<td>isIn</td>
+<td>isIn</td>
+<td>The T3 isIn does not check visibility or anything like
+that.</td>
+</tr>
+</table>
+
+<p><a href="namemethods">Complete list of TADS 3
+name methods</a> (similar to T2's aName, theName, etc.)</p>
+</li>
+<li>
+
+<p><i><a name="events" id="events"></a>Fuses and daemons</i><br />
+You start a fuse or a daemon by creating a new Daemon, Fuse,
+SenseDaemon, SenseFuse, RealTimeDaemon, RealTimeFuse,
+RealTimeSenseFuse, RealTimeSenseDaemon or PromptDaemon object.</p>
+
+<p>E.g., <tt>new Fuse(dynamite, &amp;boom, 10);</tt> will cause the
+"boom" property of the "dynamite" object to be called in 10
+turns.</p>
+
+<p>Likewise, <tt>new SenseDaemon(clock, &amp;tick, 3, clock,
+sound);</tt> will cause the "tick" property of the "clock" object
+to be called every 3 turns, but any messages the daemon generates
+(e.g. "Tick-tock!") will be suppressed unless the player-character
+is able to hear the clock.</p>
+
+<p>Real-time daemons and fuses work exactly like their turn-based
+counterparts, except that time is specified in milliseconds rather
+than turns.</p>
+
+<p>Finally, <tt>new PromptDaemon(myObj, &amp;myProp);</tt> will
+cause the "myProp" property to be evaluated on "myObj" every time a
+prompt is about to be shown. The statusline uses such a daemon, for
+instance.</p>
+
+<p>To stop an event, you hang on to the event-object, and then call
+eventManager.removeEvent:<br />
+<tt>myFuse = new Fuse(self, &amp;foo, 15);<br />
+eventManager.removeEvent(myFuse);</tt></p>
+
+<p>Or you can call eventManager.removeCurrentEvent() while
+executing the event.<br />
+Finally, you can also call eventManager.removeMatchingEvents.<br />
+<tt>eventManager.removeMatchingEvents(self, &amp;foo);</tt></p>
+
+<p>Just use <tt>realTimeManager</tt> instead of
+<tt>eventManager</tt>, if it's a real-time event.</p>
+</li>
+<li>
+
+<p><i><a name="dynvoc" id="dynvoc"></a>Dynamic vocabulary</i><br />
+Adding vocabulary to an object is not that hard.<br />
+First, determine which type of word you want to add.<br />
+&amp;noun, &amp;adjective, &amp;literalAdjective, &amp;adjApostS
+and &amp;plural are the ones used by the <tt>en_us</tt>-module.</p>
+
+<pre>
+function addVocab(obj, wordProp, word)
+{
+    if (obj.(wordProp) == nil) obj.(wordProp) = [word];
+    else obj.(wordProp) += word;
+                    
+    G_dict.addWord(obj, word, wordProp);
+}
+</pre>
+<i>Removing</i> vocabulary from an object is left as an exercise
+for the reader.</li>
+</ul><p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

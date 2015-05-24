@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Name methods reference</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 14</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: Name methods reference</div>
+<h1>Name methods reference</h1>
+<p>Note: This list is (obviously) for the English language module
+(en_us). Other language modules will probably have different
+methods.</p>
+<h2>Name properties</h2>
+<p>The basic property-values you have to fill in are:</p>
+<table>
+<tr>
+<td>name</td>
+<td>= 'name of object'</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>isPlural</td>
+<td>= nil / true</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>isMassNoun</td>
+<td>= nil / true</td>
+<td>A word like 'snow' or 'clothes'.</td>
+</tr>
+<tr>
+<td>isHim</td>
+<td>= nil / true</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>isHer</td>
+<td>= nil / true</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td>isProperName</td>
+<td>= nil / true</td>
+<td>A word like 'Bob'. (No article is prepended.)</td>
+</tr>
+</table>
+<p>The isXXX values all default to nil.</p>
+<h2>Name methods</h2>
+<p>Once those 6 values are correct, you get all these wonderful
+methods to play with:</p>
+<table>
+<tr>
+<td>isIt</td>
+<td>!(isHim || isHer)</td>
+</tr>
+<tr>
+<td>countName(count)</td>
+<td>(count) (pluralName) (e.g. "five coins")</td>
+</tr>
+<tr>
+<td>itVerb(verb)</td>
+<td>(itNom) (conjugateRegularVerb)</td>
+</tr>
+<tr>
+<td>nameVerb(verb)</td>
+<td>(theName) (conjugateRegularVerb)</td>
+</tr>
+<tr>
+<td>conjugateRegularVerb(verb)</td>
+<td>alters the verb to fit object. (E.g. 'dance' -&gt;
+'dances'.)</td>
+</tr>
+</table>
+<table>
+<tr>
+<td>itNom</td>
+<td>it</td>
+<td>they</td>
+</tr>
+<tr>
+<td>itObj</td>
+<td>it</td>
+<td>them</td>
+</tr>
+<tr>
+<td>itPossAdj</td>
+<td>its</td>
+<td>their</td>
+</tr>
+<tr>
+<td>itPossNoun</td>
+<td>its</td>
+<td>theirs</td>
+</tr>
+<tr>
+<td>itReflexive</td>
+<td>itself</td>
+<td>themselves</td>
+</tr>
+<tr>
+<td>thatNom</td>
+<td>that</td>
+<td>those</td>
+</tr>
+<tr>
+<td>thatObj</td>
+<td>that</td>
+<td>those</td>
+</tr>
+<tr>
+<td>itIs</td>
+<td>it is</td>
+<td>they are</td>
+</tr>
+<tr>
+<td>itIsContraction</td>
+<td>it's</td>
+<td>they're</td>
+</tr>
+<tr>
+<td>verbToBe</td>
+<td>is</td>
+<td>are</td>
+</tr>
+<tr>
+<td>verbWas</td>
+<td>was</td>
+<td>were</td>
+</tr>
+<tr>
+<td>verbToHave</td>
+<td>has</td>
+<td>have</td>
+</tr>
+<tr>
+<td>verbEndingS</td>
+<td>s</td>
+<td>-</td>
+</tr>
+<tr>
+<td>verbEndingEs</td>
+<td>es</td>
+<td>-</td>
+</tr>
+<tr>
+<td>verbEndingIes</td>
+<td>ies</td>
+<td>y</td>
+</tr>
+<tr>
+<td>theName</td>
+<td colspan="2">the (name)</td>
+</tr>
+<tr>
+<td>theNameObj</td>
+<td colspan="2">(theName)</td>
+</tr>
+<tr>
+<td>theNamePossAdj</td>
+<td>(theName)'s</td>
+<td>(theName)'</td>
+</tr>
+<tr>
+<td>theNamePossNoun</td>
+<td>(theName)'s</td>
+<td>(theName)'</td>
+</tr>
+<tr>
+<td>theNameWithOwner</td>
+<td colspan="2">(owner)'s (name)</td>
+</tr>
+<tr>
+<td>childInName(childName)</td>
+<td colspan="2">(childName) in (theName)</td>
+</tr>
+<tr>
+<td>childInNameWithOwner(childName)</td>
+<td colspan="2">(childName) in (owner)'s (name)</td>
+</tr>
+<tr>
+<td>theNameOwnerLoc(ownerPriority)</td>
+<td colspan="2">(owner)'s (name) OR (theName) in (location)<br />
+ownerPriority should be nil or true.</td>
+</tr>
+<tr>
+<td>countNameOwnerLoc(cnt, ownerPriority)</td>
+<td colspan="2">(owner)'s (countName) OR the (countName) in
+(location)</td>
+</tr>
+<tr>
+<td>aName</td>
+<td colspan="2">a/an/some (name)</td>
+</tr>
+<tr>
+<td>aNameObj</td>
+<td colspan="2">(aName)</td>
+</tr>
+<tr>
+<td>pluralName</td>
+<td colspan="2">(name)s</td>
+</tr>
+<tr>
+<td>nameIs</td>
+<td colspan="2">(theName) (verbToBe), e.g. 'the box is'.</td>
+</tr>
+<tr>
+<td>nameIsnt</td>
+<td colspan="2">(nameIs)n't</td>
+</tr>
+</table><p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

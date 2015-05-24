@@ -1,0 +1,593 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Exercises</title>
+<style type="text/css">
+big {
+    font-family: "Cambria", serif; 
+    font-size: 1.5em; 
+    font-weight: bold;
+    color: #1F497D; 
+    margin-right: 0.25em;
+    width: 2em;
+}
+
+a:hover big { text-decoration: underline; }
+
+pre { font-size: 9pt; }
+
+.q { margin: 1.5em 0 0 0; clear: both; }
+
+a.toggle {
+    display: block;
+    text-decoration: none;
+    color: #000;
+}
+
+.solution {
+    border: solid #bbf 1px;
+    background-color: #E6F2FF;
+    padding: 0 1em;
+    margin: 1em 0;
+    display: block;
+    visibility: hidden;
+}
+
+.c { color: #080; }
+</style>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /><script type="text/javascript">
+function showSol(num)
+{
+    element = document.getElementById("a" + num);
+    if (element.style.visibility == 'visible')
+    {
+        element.style.display = 'none';
+        element.style.visibility = 'hidden';
+    }
+    else
+    {
+        element.style.display = 'block';
+        element.style.visibility = 'visible';
+    }
+}
+
+function handleLoad()
+{
+    for (i = 1; 10 >= i; i++)
+    {
+        element = document.getElementById("a" + i);
+        if (element) element.style.display = 'none';
+    }
+}
+</script>
+</head>
+<body onload="handleLoad()">
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 13</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: Exercises</div>
+<h1>Exercises</h1>
+<p>In each section, one or more objects are described. Consider how they might
+be implemented, then click on the question to check the answer.</p>
+<p class="q"><a class="toggle" href="#" onclick="showSol(1);return false;"><big>1.</big> 
+A window that is painted shut. The player shouldn't find out until s/he tries opening it.
+</a></p><div class="solution" id="a1">
+<pre>window: Fixture 'window' 'window'
+    dobjFor(Open)
+    {
+        <span class="c">/*
+         *  It's perfectly logical to try to open the window.
+         *  So verify() allows the action.
+         */</span>
+        verify() { }
+        
+        <span class="c">/* But as the player tries to open it, we fail. */</span>
+        action()
+        {
+            "As you try to open the window,
+             you find that it's painted shut. ";
+        }
+    }
+;
+</pre>
+
+<p>An alternative would be to use <tt>check()</tt> instead of
+<tt>action()</tt>, and then finish with <tt>exit;</tt>. You can
+read more about the difference in <a href=
+"http://www.tads.org/howto/t3verifyCheck.htm">this technical
+article</a>.</p>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(2);return false;"><big>2.</big> 
+A cooking pot that's too hot to be picked up without gloves.
+</a></p><div class="solution" id="a2">
+<pre>gloves: Wearable 'glove*gloves' 'gloves'
+    isPlural = true
+;
+
+cookingPot: Container 'hot cooking pot' 'cooking pot'
+    "It looks hot."
+    dobjFor(Take)
+    {
+        action()
+        {
+            <span class="c">/*
+             *  Check if <i>gActor</i> (= the actor doing the take) is
+             *  wearing the gloves.
+             */</span>
+            if (!gloves.isWornBy(gActor))
+            {
+                <span class="c">/*
+                 *  Instead of just displaying the message (using
+                 *  double-quotes), we use the special macro
+                 *  <i>reportFailure</i>.
+                 *  The only difference is the result of an implied
+                 *  take:
+                 *  &gt; PUT POT IN DISHWASHER
+                 *  (first <i>trying</i> to take the cooking pot)
+                 *  Ow! It's burning hot.
+                 */</span>
+                reportFailure('Ow! It\'s burning hot! ');
+            }
+            else inherited();
+        }
+    }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(3);return false;"><big>3.</big> 
+Now, have the pot contain some edible soup, but require the
+player to be holding a spoon to eat it. If the player isn't holding
+the spoon, but it's reachable, he should take it
+automatically.
+</a></p><div class="solution" id="a3">
+
+<pre>spoon: Thing 'spoon' 'spoon';
+
+<span class="c">/*
+ *  We don't use the Food class, since it provides
+ *  no functionality that we want.
+ */</span>
+soup: Thing 'hot soup' 'soup' @cookingPot
+    "Mmm. Looks good. "
+
+    <span class="c">/* Prevent "pot (which contains a soup)"-type messages. */</span>
+    isMassNoun = true
+    
+    <span class="c">/*
+     *  We use preconditions to make sure the player is holding
+     *  the spoon. We want the objHeld precondition, but it's
+     *  not the soup that should be held. Instead, we create
+     *  an ObjectPreCondition which force the spoon to be held.
+     *
+     *  We only want to create it once, when the code is compiled,
+     *  which is why we add the "static" keyword.
+     */</span>
+     
+    spoonHeldPreCond = static new ObjectPreCondition(spoon, objHeld)
+    
+    <span class="c">/* Taste is the same as Eat. */</span>
+    dobjFor(Taste) asDobjFor(Eat)
+
+    dobjFor(Eat)
+    {
+        preCond = [spoonHeldPreCond]
+        verify() { }
+        action()
+        {
+            "Mmm. Tasty. ";
+        }
+    }
+    dobjFor(Take)
+    {
+        verify() { illogical('You can\'t take that. '); }
+    }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(4);return false;"><big>4.</big> 
+Implement some dynamite with a fuse as a separate component.
+LIGHT DYNAMITE should be the same as LIGHT FUSE, and must require a
+fire source to light the fuse. When the fuse burns out, the
+dynamite should explode, killing off the player if s/he is in the
+same room.
+
+</a></p><div class="solution" id="a4">
+
+<pre><span class="c">/* For a light-source, the library has a Matchstick class. */</span>
+Matchstick 'matchstick/match/stick*matchsticks sticks' 'matchstick';
+
+dynamite: Thing 'dynamite' 'dynamite'
+    isMassNoun = true
+
+    <span class="c">/* Remap Burn and Extinguish to the fuse. */</span>
+    dobjFor(Burn) remapTo(Burn, dynamiteFuse)
+    dobjFor(Extinguish) remapTo(Extinguish, dynamiteFuse)
+;
+
+<span class="c">/*
+ *  For the fuse, we use the library's Candle class. Then we
+ *  simply need to change the messages.
+ *
+ *  Notice that 'dynamite' is in a parenthesis.
+ *  This means that 'dynamite' alone won't refer to the fuse.
+ */</span>
+
++ dynamiteFuse: Candle, Component '(dynamite) fuse' 'dynamite fuse'
+    desc()
+    {
+        if (isLit) "It's lit! Run! ";
+        else "It's not lit. ";
+    }
+
+    fuelLevel = 4
+    
+    sayBurnedOut()
+    {
+        <span class="c">/*
+         *  We display this without checking the player's location,
+         *  since Candle makes sayBurnedOut run in a <i>SenseDaemon</i>
+         *  that hides all printed messages, if the player can't see
+         *  the dynamite (well, the fuse, to be exact.)
+         */</span>
+         
+        "\bThe dynamite fuse burns out.\b";
+        
+        if (gPlayerChar.roomLocation == dynamite.roomLocation)
+        {
+            <span class="c">/*
+             *  Check if our topmost location is the same as the
+             *  player's. If it is, we print a message and end the
+             *  game, though we allow the player to undo.
+             */</span>
+            "\b&lt;B&gt;*** &lt;BIG&gt;BOOM&lt;/BIG&gt; ***&lt;/B&gt;\b";
+            finishGame([finishOptionUndo]);
+
+            <span class="c">/* (finishGame never returns.) */</span>
+        }
+
+        <span class="c">/* Else, make the dynamite disappear from the game world. */</span>
+        dynamite.moveInto(nil);
+    }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(5);return false;"><big>5.</big> 
+Code a DefaultAskTellTopic response that takes into account
+what object the player asked about, if any, and uses the literal
+topic text otherwise.
+
+</a></p><div class="solution" id="a5">
+
+<pre>DefaultAskTellTopic
+    topicResponse()
+    {
+        <span class="c">/* Find the best match for the specified topic. */</span>
+        local topic = gTopic.getBestMatch();
+        
+        if (topic &amp;&amp; topic.ofKind(Thing))
+        {
+            <span class="c">/* There's a match, and it's a Thing. */</span>
+            "&lt;q&gt;What can you tell me about
+             &lt;&lt; topic.theName &gt;&gt;?&lt;/q&gt; you ask.
+
+             &lt;q&gt;I'm afraid I don't know much about
+             &lt;&lt; topic.itObj &gt;&gt;,&lt;/q&gt; he replies. ";
+        }
+        else
+        {
+            <span class="c">/*
+             *  No match, or the match is a Topic.
+             *  Since topics don't have names, we must treat
+             *  them just like we treat unrecognizable sentences.
+             */</span>
+            "You ask him about &lt;&lt; gTopic.getTopicText() &gt;&gt;,
+             but he just shrugs. ";
+        }
+   }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(6);return false;"><big>6.</big> 
+A white horse named Black Beauty, and a black horse named White
+Beauty.
+The word "black" used alone should refer to Black Beauty, but
+"black horse" should refer to White Beauty.
+</a></p><div class="solution" id="a6">
+
+<pre>whiteHorse: Actor 'white black beauty/horse' 'Black Beauty'
+    <span class="c">/* Avoid "You see the Black Beauty"-type messages. */</span>
+    isProperName = true
+    
+    matchNameCommon(origTokens, adjustedTokens)
+    {
+        <span class="c">/*
+         *  If both the words 'black' and 'horse' were used,
+         *  we don't match. Nor if 'white' but not 'horse'
+         *  were used.
+         */</span>
+
+        if (adjustedTokens.indexOf('black')
+            &amp;&amp; adjustedTokens.indexOf('horse')) return nil;
+        if (adjustedTokens.indexOf('white')
+            &amp;&amp; !adjustedTokens.indexOf('horse')) return nil;
+
+        <span class="c">/* Otherwise, run the default checks. */</span>
+        return inherited(origTokens, adjustedTokens);
+    }
+;
+
+blackHorse: Actor 'white black beauty/horse' 'White Beauty'
+    isProperName = true
+    
+    matchNameCommon(origTokens, adjustedTokens)
+    {
+        if (adjustedTokens.indexOf('white')
+            &amp;&amp; adjustedTokens.indexOf('horse')) return nil;
+        if (adjustedTokens.indexOf('black')
+            &amp;&amp; !adjustedTokens.indexOf('horse')) return nil;
+
+        return inherited(origTokens, adjustedTokens);
+    }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(7);return false;"><big>7.</big> 
+A player-character with hair, and a comb. The verb COMB should
+also be implemented, allowing both COMB, COMB HAIR and COMB HAIR
+WITH COMB.
+</a></p><div><a href="http://www.tads.org/howto/t3verb.htm" target=
+"_blank">[&nbsp;Technical&nbsp;article&nbsp;on&nbsp;creating&nbsp;verbs&nbsp;]</a></div>
+<div class="solution" id="a7">
+
+<pre><span class="c">/* Define an action that takes two objects. */</span>
+
+DefineTIAction(CombWith);
+
+VerbRule(CombWith)
+    ('comb' | 'groom') singleDobj 'with' singleIobj : CombWithAction
+    verbPhrase = 'comb/combing (what) (with what)'
+;
+
+<span class="c">/*
+ *  Assuming that leaving out the indirect object never makes sense,
+ *  we can use the following code to ask the player for one.
+ *  Note that it's the same action, just another verb rule.
+ */</span>
+VerbRule(CombWithWhat) ('comb' | 'groom') singleDobj : CombWithAction
+    verbPhrase = 'comb/combing (what) (with what)'
+    construct()
+    {
+        <span class="c">/* These two lines makes the parser ask for an object. */</span>
+        iobjMatch = new EmptyNounPhraseProd();
+        iobjMatch.responseProd = withSingleNoun;
+    }
+;
+
+<span class="c">/*
+ *  Provide a default response to CombWith.
+ *  This is optional; without it, TADS will just reply
+ *  "You can't do that.".
+ */</span>
+modify Thing
+    dobjFor(CombWith) <span class="c">/* We're being combed */</span>
+    {
+        preCond = [touchObj]
+        verify() { illogical('{You/he} can\'t comb {the dobj/him}. '); }
+    }
+    iobjFor(CombWith) <span class="c">/* We're being used to comb something else */</span>
+    {
+        preCond = [objHeld]
+        verify()
+        {
+            illogical('{You/he} can\'t comb anything
+                       with {the iobj/him}. ');
+        }
+    }
+;
+
+me: Person;
+
++ comb: Thing 'comb' 'comb'
+    iobjFor(CombWith)
+    {
+        verify() { }
+    }
+;
+
++ myHair: Fixture 'hair' 'hair'
+    theName = 'your hair'
+    isMassNoun = true
+
+    dobjFor(CombWith)
+    {
+        verify() { }
+        action() { "Now it's nice. "; }
+    }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(8);return false;"><big>8.</big> 
+Now, have the player wear a hat initially. Combing the hair
+should be impossible while the hat is worn.
+</a></p><div class="solution" id="a8">
+
+<pre><span class="c">/* Change <i>me</i> to this: */</span>
+me: Person
+    checkTouchViaPath(obj, dest, op)
+    {
+        if (dest == myHair &amp;&amp; hat.isWornBy(self))
+             return new CheckStatusFailure(
+                'Your hat is in the way. ', dest);
+        return checkStatusSuccess;
+    }
+;
++ hat: Wearable 'hat' 'hat'
+    wornBy = me
+;
+</pre>
+
+<p>This example could easily be extended to make the player
+automatically remove the hat, using preconditions.<br />
+Have a look at the OutOfReach class in objects.t to see how.</p>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(9);return false;"><big>9.</big> 
+Handle SHOOT GUN, SHOOT MAN, SHOOT AT MAN and SHOOT AT MAN WITH
+GUN.
+</a></p><div class="solution" id="a9">
+
+<pre>DefineTAction(Shoot);        <span class="c">/* Ambiguous - shooting at or with? */</span>
+DefineTAction(ShootAt);      <span class="c">/* Missing weapon. */</span>
+DefineTAction(ShootWith);    <span class="c">/* Missing target. */</span>
+DefineTIAction(ShootAtWith); <span class="c">/* Complete command. */</span>
+
+<span class="c">/* SHOOT GUN or SHOOT MAN. */</span>
+VerbRule(Shoot) 'shoot' singleDobj : ShootAction
+    verbPhrase = 'shoot/shooting (what)'
+;
+
+<span class="c">/* SHOOT AT MAN. */</span>
+VerbRule(ShootAt) ('shoot' | 'fire') 'at' singleDobj : ShootAtAction
+    verbPhrase = 'shoot/shooting (at what)'
+;
+
+<span class="c">/* SHOOT WITH GUN. */</span>
+VerbRule(ShootWith)
+    (('shoot' | 'fire') 'with' | 'fire') singleDobj : ShootWithAction
+    verbPhrase = 'fire/firing (what)'
+;
+
+<span class="c">/* SHOOT MAN (dobj) WITH GUN (iobj). */</span>
+VerbRule(ShootAtWith)
+    ('shoot' | 'fire') ('at' | ) singleDobj 'with' singleIobj : ShootAtWithAction
+    verbPhrase = 'shoot/shooting (at what) (with what)'
+;
+
+<span class="c">/* SHOOT GUN (iobj) AT MAN (dobj). */</span>
+VerbRule(ShootWithAt)
+    ('shoot' | 'fire') ('with' | ) singleIobj 'at' singleDobj : ShootAtWithAction
+    verbPhrase = 'shoot/shooting (at what) (with what)'
+;
+
+modify Thing
+    <span class="c">/* For most Things, Shoot means Shoot At. */</span>
+    dobjFor(Shoot) asDobjFor(ShootAt)
+    dobjFor(ShootAt)
+    {
+        verify() { illogical('{You/he} can\'t shoot at {the dobj/him}. '); }
+    }
+    dobjFor(ShootWith)
+    {
+        preCond = [objHeld]
+        verify() { illogical('{You/he} can\'t shoot with {the dobj/him}. '); }
+    }
+    dobjFor(ShootAtWith)
+    {
+        verify() { illogical('{You/he} can\'t shoot at {the dobj/him}. '); }
+    }
+    iobjFor(ShootAtWith)
+    {
+        preCond = [objHeld]
+        verify() { illogical('{You/he} can\'t shoot with {the iobj/him}. '); }
+    }
+;
+
+gun: Thing 'gun' 'gun' @me
+    <span class="c">/* For a gun, Shoot means Shoot With. */</span>
+    dobjFor(Shoot) asDobjFor(ShootWith)
+    dobjFor(ShootWith)
+    {
+        verify() { }
+        <span class="c">/* Find a suitable dobj (target), making me iobj. */</span>
+        action() { askForDobj(ShootAtWith); }
+    }
+    iobjFor(ShootAtWith)
+    {
+        verify() { }
+        <span class="c">/* We let the dobj (target) handle the shooting. */</span>
+    }
+;
+
+me: Person
+    dobjFor(ShootAt)
+    {
+        verify() { }
+        <span class="c">/* Find a suitable iobj (weapon). */</span>
+        action() { askForIobj(ShootAtWith); }
+    }
+    dobjFor(ShootAtWith)
+    {
+        verify() { }
+        action()
+        {
+            "\b&lt;B&gt;*** You have died! ***&lt;/B&gt;\b";
+            finishGame([finishOptionUndo]);
+        }
+    }
+;
+</pre>
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(10);return false;"><big>10.</big> 
+An all-time personal favourite from the <i>Inform
+Designer's Manual IV</i>: Arrange for a bearded psychiatrist to place the
+player under observation, occasionally mumbling insights such as "Subject puts
+green cone on table. Interesting."
+</a></p><div class="solution" id="a10">
+<pre>psychiatrist: Person
+    'bearded doctor/psychiatrist/psychologist/shrink'
+    'bearded psychiatrist'
+;
+
++ HermitActorState
+    <span class="c">/* This is the psychiatrist's initial state. */</span>
+    isInitState = true
+    
+    <span class="c">/* Shown in room descriptions when we're present. */</span>
+    specialDesc = "A bearded psychiatrist has you under observation. "
+    
+    <span class="c">/*
+     *  So, what's with the <i>extraReport</i>s, you wonder?
+     *  Well, if the text was simply displayed using
+     *  regular double-quotes, it'd cause default reports
+     *  (like "Taken." and "Dropped.") to be suppressed:
+     *
+     *  &gt;take thing
+     *  "Subject feels lack of the thing. (...)"
+     *
+     *  &gt;
+     *
+     *  By explicitly making the texts extraReports, they don't
+     *  suppress the default report.
+     */</span>
+    beforeAction()
+    {
+        if (gActionIs(Take))
+            extraReport('&lt;q&gt;Subject feels lack of {the dobj/him}.
+             Suppressed Oedipal complex? Hmm.&lt;/q&gt;\b');
+    }
+    afterAction()
+    {
+        if (gActionIs(PutIn))
+           extraReport('\b&lt;q&gt;Subject associates {the dobj/him}
+            with {the iobj/him}. Interesting.&lt;/q&gt;\b');
+
+        else if (gActionIs(PutOn))
+            extraReport('\b&lt;q&gt;Subject puts {the dobj/him} on
+             {the iobj/him}. Interesting.&lt;/q&gt;\b');
+
+        else if (gActionIs(Look))
+            extraReport('\b&lt;q&gt;Pretend I'm not here.&lt;/q&gt;\b');
+    }
+
+    <span class="c">/*
+     *  While beforeAction, afterAction, specialDesc and isInitState
+     *  are available for any ActorState, noResponse is special to
+     *  HermitActorState.
+     */</span>
+    noResponse()
+    {
+        "He is fascinated by your behaviour, but makes no attempt
+         to interfere with it. ";
+    }
+;
+</pre>
+<p>Inform authors might want to compare this with <a href=
+"http://www.inform-fiction.org/manual/html/sa6.html#ans26" target=
+"_blank">the Inform-version</a>.</p>
+</div><p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

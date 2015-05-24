@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Streams in TADS 3</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 17</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: Streams in TADS 3</div>
+<h1>Streams in TADS 3</h1>
+<p>Using my <a href="stream.t">TADS 3 Streaming Module</a>, you can
+use streams for storing data. I also have an <a href=
+"streamtest.t">example program</a> demonstrating some features.</p>
+<p>The performance is excellent - in a project, I've been able to
+stream rougly 500 objects (and plenty of associated data) to and
+from a FileStream with no noticable delay.</p>
+<h2>Using streams</h2>
+<p>Streams work a bit like files, in that they allow reading and
+writing of data. However, they work at a higher level, providing
+methods for storing and loading many kinds of Tads values,
+including generic objects.</p>
+<p>Furthermore, streams provide a generic interface that can be
+used for storing data in many different ways.</p>
+<p>This stream module provides a <tt><a href=
+"#FileStream">FileStream</a></tt> class, a <tt><a href=
+"#ByteArrayStream">ByteArrayStream</a></tt> class and a
+<tt><a href="#VectorStream">VectorStream</a></tt> class, for
+streaming to and from byte arrays, vectors and raw files.</p>
+<p>Each of the specific classes only have to take care of reading
+and writing simple integers; the Stream class takes care of the
+rest. (The subclasses included in the stream module also provide
+their own methods for storing and loading strings, but that's only
+for effeciency - subclasses are not required to do so.)</p>
+<h2>Value registration</h2>
+<p>Since the subclasses of Stream only knows how to work with
+simple integers, the Stream class must have a way of converting
+generic Tads values to integers.</p>
+<p>Some types convert easily, such as true, nil, integers and
+strings. Some types can be decomposed into simpler values, namely
+lists and some objects.</p>
+<p>But enums, properties, functions, and most objects can't simply
+be split into components or saved as integers. To handle these
+values, the Stream class provides a <i>registration</i>
+mechanism.</p>
+<p>For instance, if you have some enums that you want to store,
+you'd do something like this:</p>
+<p><tt>enum Foo, Bar, FooBar;</tt><br />
+...<br />
+<tt>Stream.registerValues(1000, Foo, Bar, FooBar);</tt><br />
+...<br />
+<tt>myStream.storeValue(FooBar);</tt></p>
+<p>Values are registred globally; that is, once registred, they're
+available for all streams. Hence registerValues is called on the
+Stream class, rather than on an instance.</p>
+<p>For more information, see <a href=
+"#registerValues">registerValues</a>.</p>
+<h2>Streaming objects</h2>
+<p>First of all: You can only stream generic data-only objects, and
+registred objects. But registred objects are considered constant.
+If you put a registred object on a stream, only its ID is stored,
+not its properties.</p>
+<p>To store generic data-only objects, you must register any
+superclasses that contain code, all properties containing data, and
+the TadsObject class.</p>
+<p>Here's an example, where an instance of MyClass is stored on a
+stream. The instance can be stored, because it only contains data,
+and because the superclass (MyClass) and the data-property
+(&amp;foo) is registred.</p>
+<pre>
+class MyClass: object
+    foo = nil
+    print = "Foo: &lt; foo &gt;&gt;
+"
+;
+</pre>
+<p>...</p>
+<pre>
+Stream.registerValues(5000, TadsObject, MyClass, &amp;foo);
+local stream = new VectorStream(new Vector(32, 32));
+local obj = new MyClass();
+obj.foo = 42;
+stream.storeValue(obj);
+</pre>
+<a name="Stream" id="Stream"></a>
+<h2>The Stream class</h2>
+<p><a name="streamCharset" id=
+"streamCharset"></a><tt><b>streamCharset</b></tt> - Holds the
+CharacterSet used by some Stream subclasses for streaming strings.
+By default, all streams use UTF-8.</p>
+<p><a name="registerValues" id=
+"registerValues"></a><tt><b>registerValues(id, [vals])</b></tt> -
+Register values for later storage/retrieval. id specifies the
+integer ID that should be associated with the first value, the
+following values will be associated with consecutive IDs.</p>
+<p><tt>Stream.registerValues(5000, TadsObject, Vector,
+MyClass);</tt><br />
+will associate TadsObject with ID #5000, Vector with #5001 and
+MyClass with #5002.</p>
+<p>The call to Stream.registerValues will often be placed in the
+beginning of the main() function, or in a PreinitObject's execute()
+method.</p>
+<p><a name="storeList" id=
+"storeList"></a><tt><b>storeList(lst)</b></tt> - Stores a list to
+the stream. A list can be streamed if all its elements can be
+streamed.</p>
+<p><a name="loadList" id="loadList"></a><tt><b>loadList()</b></tt>
+- Loads a list from the stream.</p>
+<p><a name="storeString" id=
+"storeString"></a><tt><b>storeString(str)</b></tt> - Stores a
+string to the stream.</p>
+<p><a name="loadString" id=
+"loadString"></a><tt><b>loadString()</b></tt> - Loads a string from
+the stream.</p>
+<p><a name="storeRegistred" id=
+"storeRegistred"></a><tt><b>storeRegistred(val)</b></tt> - Stores a
+value registred using registerValues to the stream.</p>
+<p><a name="loadRegistred" id=
+"loadRegistred"></a><tt><b>loadRegistred()</b></tt> - Loads a value
+registred using registerValues from the stream.</p>
+<p><a name="storeValue" id=
+"storeValue"></a><tt><b>storeValue(val)</b></tt> - Stores any kind
+of value to the stream.</p>
+<p><a name="loadValue" id=
+"loadValue"></a><tt><b>loadValue()</b></tt> - Loads any kind of
+value from the stream.</p>
+<p><a name="cannotStoreValue" id=
+"cannotStoreValue"></a><tt><b>cannotStoreValue(val)</b></tt> - This
+is called when the stream can't store a value (because it's not
+registred, and can't be decomposed into streamable parts.)</p>
+<p>By default, cannotStoreValue throws an <a href=
+"#EStreamStoreUnregistredValue">EStreamStoreUnregistredValue</a>
+exception.</p>
+<p><a name="cannotLoadType" id=
+"cannotLoadType"></a><tt><b>cannotLoadType(type)</b></tt> - This is
+called when the stream doesn't recognize a value type. This often
+means that the underlying data have been corrupted.</p>
+<p>By default, cannotLoadType throws an <a href=
+"#EStreamError">EStreamError</a> exception.</p>
+<h3>Stream primitives</h3>
+<p>The stream primitves must be implemented by the Stream subclass
+employed. That is, unlike the higher level load/store methods, the
+following methods don't have default implementations. If the stream
+doesn't support a method, it'll throw an <a href=
+"#EStreamUnsupportedMethod">EStreamUnsupportedMethod</a>
+exception.</p>
+<p><tt><b>storeByte(x)</b></tt> - Store a byte (8 bits).</p>
+<p><tt><b>storeWord(x)</b></tt> - Store a word (16 bits/2
+bytes).</p>
+<p><tt><b>storeInteger(x)</b></tt> - Store a full Tads integer (32
+bits/4 bytes).</p>
+<p><tt><b>loadByte()</b></tt> - Load a byte (8 bits).</p>
+<p><tt><b>loadWord()</b></tt> - Load a word (16 bits/2 bytes).</p>
+<p><tt><b>loadInteger()</b></tt> - Load a full Tads integer (32
+bits/4 bytes).</p>
+<p><tt><b>getSize()</b></tt> - Returns the size of the stream. This
+will often be in bytes, but doesn't have to. Passing getSize to
+setPosition will make the next store/load operation occur at the
+end of the stream.</p>
+<p><tt><b>getPosition()</b></tt> - Returns the current position in
+the stream. The return value can later be passed to
+setPosition.</p>
+<p><tt><b>setPosition(pos)</b></tt> - Changes the current stream
+position.</p>
+<p><tt><b>closeStream()</b></tt> - This method frees any resources
+associated with the stream, such as file handles. By default, it
+does nothing.</p>
+<hr />
+<a name="ByteArrayStream" id="ByteArrayStream"></a>
+<h2>The ByteArrayStream class</h2>
+<p>The ByteArrayStream class provides streaming to and from an
+underlying ByteArray. The constructor takes a ByteArray object.</p>
+<p><tt>myStream = new ByteArrayStream(new
+ByteArray(1024));</tt></p>
+<p>ByteArrayStream supports all stream primitives. <a name=
+"VectorStream" id="VectorStream"></a></p>
+<h2>The VectorStream class</h2>
+<p>The VectorStream class provides streaming to and from an
+underlying Vector. The constructor takes a Vector object - note
+that the stream can't expand the Vector as neccessary, so you must
+specify an initial length. The VectorStream is not terribly
+usefull, except for debugging purposes, where you want to see what
+exactly ends up on the stream.</p>
+<p><tt>myStream = new VectorStream(new Vector(64, 64));</tt></p>
+<p>VectorStream supports all stream primitives. <a name=
+"FileStream" id="FileStream"></a></p>
+<h2>The FileStream class</h2>
+<p>The FileStream class provides streaming to and from a raw file,
+or streaming from raw resource. The constructor takes a File
+object, which must be opened in raw mode using
+<tt>File.openRawFile()</tt> or <tt>File.openRawResource()</tt>. The
+FileStream is where streaming becomes really usefull, since you can
+store objects in a file and load them into a later session, or even
+load objects from one T3 program into another.</p>
+<p><tt>myStream = new FileStream(File.openRawFile('mydata.dat',
+FileAccessWrite));</tt></p>
+<p>FileStream supports all stream primitives.</p>
+<hr />
+<a name="EStreamError" id="EStreamError"></a>
+<h2>The EStreamError exception</h2>
+<p>The EStreamError is the general-purpose basic Stream exception
+from which the other Stream exceptions inherit. <a name=
+"EStreamLoadUnregistredValue" id=
+"EStreamLoadUnregistredValue"></a></p>
+<h2>The EStreamLoadUnregistredValue exception</h2>
+<p>The EStreamLoadUnregistredValue exception is thrown on attempts
+to load values from a stream that have not been registred.<br />
+This indicates a corrupted stream or that different
+value-registrations were used when storing the value. <a name=
+"EStreamStoreUnregistredValue" id=
+"EStreamStoreUnregistredValue"></a></p>
+<h2>The EStreamStoreUnregistredValue exception</h2>
+<p>EStreamStoreUnregistredValue is thrown on attempts to store
+values to a stream that can only be stored when registred.<br />
+You must ensure that the value itself is registred, or that it can
+be decomposed into registred values. <a name=
+"EStreamUnsupportedMethod" id="EStreamUnsupportedMethod"></a></p>
+<h2>The EStreamUnsupportedMethod exception</h2>
+<p>This exception is thrown if you try to call a stream primitive
+not supported by the stream. The stream classes in the streams
+module support all the stream primitives, so you should not see
+this error unless you use other stream classes.</p>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

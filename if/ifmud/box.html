@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>The Presidential Campaign HQ box</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 8</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/ifmud/">ifMUD</a>: The Presidential Campaign HQ box</div>
+<h1>The Presidential Campaign HQ box</h1>
+<p class="input">&gt; <span>x box</span></p>
+<p>It's an ordinary box. Well, not that ordinary, seeing as there's a presidential campaign HQ inside it.<br />
+Inside the campaign HQ you see: thingy, random number generator, banner, newbie flag, and a bunch of pamphlets.<br />
+Obvious Actions: put * in box, take * from box, put me in box, x * in box</p>
+<h2>Real containers versus fake containers</h2>
+<p>The MUD recently got the <tt>container</tt>-flag, which can be set on any item to allow commands like put item = container.
+However, the campaign HQ is not implemented that way, because you can't put people into a container-object. 
+Instead, it's implemented the way all containers had to be implemented before the <tt>container</tt>-flag: Using several messily coded actions and a room to hold the contents of the box.</p>
+<p>The room was created as object #13979, and the box as object #13993. And I (the player Kwi) am #12456.</p>
+<h2>Step 1: The room</h2>
+<pre>@desc here = @print(
+ "This is the Banana for President 2004 Campaign Headquarters,
+  at least according to a big banner hanging on the wall.
+  However, the headquarter is also a box in ",
+ @shortname(@toploc(13993)),
+ ". Yeah, it's rather peculiar.%c
+  Above you, you can hear distant chatter."
+)</pre>
+<p>The box can be picked up and carried around - the description will reflect its location (or the location of the player holding it.)</p>
+<h2>Step 2: Leaving the box</h2>
+<p><tt>@open up;u;out;o = #14</tt></p>
+<p>Any linkok destination would do. The destination is adjusted whenever someone uses the exit:</p>
+<p><tt>@success up = @setdest("%!", @toploc(13993));@print("You climb out of the box.")</tt></p>
+<p><tt>@odrop up = climbs out of the box.</tt> (shown to the players in the box location)</p>
+<p><tt>@osuccess up = climbs out of the box.</tt> (shown to the players inside the box)</p>
+<p><tt>@field up = exitto : out of the box</tt></p>
+<p><tt>@desc up = @print("You see ", @shortname(@toploc(13993)), ".")</tt></p>
+<h2>Step 3: The box description</h2>
+<pre>@desc box = @tell(12456, "[ %n looks in the HQ box. ]");
+ @print("It's an ordinary box. Well, not that ordinary,
+  seeing as there's a presidential campaign HQ inside it.%c
+  Inside the ",
+  @switch(@rand(2), 0, "box", "campaign HQ"),
+  " you see: ",
+  @contentsloop(13979, "o",
+   @switch(@type("%o"),
+    4, @switch(@shortname("%o"),
+     "pamphlet", "",
+     @print(@shortname("%o"), ", ")
+    ),
+    2, @print(@shortname("%o"), " (the person), "),
+    ""
+   )
+  ),
+  "and a bunch of pamphlets."
+ )</pre>
+<p>This isn't a particularly good implementation, though. First of all, it'll always claim there are pamphlets,
+even if there isn't any. Secondly, if there are only pamphlets, or if it's empty, we get this odd text:<br />
+<tt>Inside the box you see: and a bunch of pamphlets.</tt><br />
+But it'll do.</p>
+<h2>Step 4: A support routine</h2>
+<p>This routine will find an item, a player or an exit in the box, which has a name that matches %4.
+%4 is the text that matches the wildcard in actions such as <tt>put * in box</tt>.</p>
+<pre>@field box = findobj : @let("o", @object(13979, "%4"),
+ @switch("%o",
+  -1, @let("o", @player("%4"), @switch("%o",
+   -1, @let("o", @exit(13979, "%4"), @switch("%o",
+    -1, @print(
+     "I don't know who or what you're reffering to with \"%4\".",
+     @s("obj", -1)
+    ),
+    @s("obj", "%o")
+   )),
+   @s("obj", "%o")
+  )),
+  @s("obj", "%o")
+ )
+)</pre>
+<p>We set the <tt>obj</tt> field on the box to the matching object, or -1 if we find none.</p>
+<h2>Step 5: Looking at stuff in the box</h2>
+<p>Examining items in the box could be done in two ways. One way would be to @call the description field of the object. This requires the object
+in question to be owned by me (or the box to be set <tt>wizard</tt>, but that ain't gonna happen).<br />
+The other way is to @getfield the description, then @execute it. This requires the object in question to be
+owned by me, or set <tt>examinable</tt>.</p>
+<p>Obviously, the latter solution is better, since it can also be used on examinable objects.
+A more subtle problem with the first solution is, that in the cases where the box doesn't have permissions
+to @call the object, the box would have no way to tell if anything was printed at all.</p>
+<p>With @getfield, we simply test if the result is empty. If it is, it's a permission issue, and we just print this text:<br />
+<tt>Hmm... No, you're not really able to see the details of (the object) from this distance. Maybe if you were in the box yourself, you would be. Or, less weird, less fun, you could try taking it from the box, then look at it.</tt></p>
+<p><tt>@action x * in box;x * inside box;look at * in box;look at * inside box;l at * in box;l at * inside box = box : nowhere</tt></p>
+<p>To make the wildcard work, we need to make the action <tt>puzzle</tt>:<br />
+<tt>@set x * in box = puzzle</tt></p>
+<p>And finally, the actual code (the actual mapping from word to object is done in the support routine from part 4.)</p>
+<pre>@success x * in box = @call(13993, "findobj");
+ @let("o", @getfield(13993, "obj"), @switch("%o",
+  -1, "",
+  @let("x", @getfield("%o", "description"), @switch("%x",
+   "", @print(
+    "Hmm... No, you're not really able to see the details of ",
+    @shortname("%o"),
+    " from this distance. Maybe if you were in the box yourself,
+     you would be. Or, less weird, less fun, you could 
+     try taking it from the box, then look at it."
+   ),
+   @execute("%x")
+  ))
+ ))</pre>
+<p>First, we let %o be the found object. Then we check if it's -1, in which case an error message have already been printed,
+and we do nothing.</p>
+<p>Otherwise, we try to get the description (which we store in %x). If the description is empty, we didn't have permission
+to read the field, and just print a default response. Otherwise we execute the description.</p>
+<h2>Step 6: Putting things inside the box</h2>
+<pre>@action put * in box;put * into box = box : nowhere
+@set put * in box = puzzle
+
+@action put me in box;put me into box = box : nowhere
+@success put me in box = @call(13993, "putmesub")</pre>
+<p>Here we have two actions, one for objects, and one for the player.
+Actually, we allow the <tt>put * in box</tt> action to handle "me" too - the explicit <tt>put me in box</tt> action is only there to ensure that players realise that it's possible.</p>
+<pre>@success put * in box = @switch("%0",
+ "me", @call(13993, "putmesub"),
+ @let("o", @object("%#", "%4"), @switch("%o",
+  -1, @let("x", @object(@location("%#"), "%4"), @switch("%o",
+   -1, "I don't know who or what you're reffering to with \"%4\".",
+   @print(@setfield(13993, "putobj", "%o"), @call(13993, "putsub"))
+  )),
+  @print(@setfield(13993, "putobj", "%o"), @call(13993, "putsub"))
+ ))
+)</pre>
+<p>At the very beginning, we check if %0 (the lowercase version of the text matching user input) is "me".<br />
+In that case, we skip directly to the <tt>putmesub</tt> subroutine (see below).<br />
+Then, in our attempt to find the specified object, we first check the player's inventory, then the player's location.<br />
+If we find anything, we call our <tt>putsub</tt> subroutine, otherwise we print an error message.</p>
+<p>The <tt>putmesub</tt> routine is straight forward:</p>
+<pre>@field box = putmesub :
+ @tell("%#", "You put yourself into the box.");
+ @move("%#", 13979);
+ @tellroom(@location(13993), "%#",
+   @print(@shortname("%#"), " drops %r into the box."));
+ @tellroom(13979, "%#",
+  @print(@shortname("%#"), " drops %r from above, into the room."));</pre>
+<p>The <tt>putsub</tt> routine is a bit more complex, as we have to deal with lack of permissions. First we try to move the object,
+then we see if it was actually moved.</p>
+<pre>@field box = putsub : @let("o", @g("putobj"), @print(
+ @move("%o", 13979),
+ @switch(@location("%o"),
+  13979, @print(
+   "You put ", @shortname("%o"), " into the box.",
+   @tellroom(@location(13993), "%#",
+    @print(@shortname("%#"), " puts ", @shortname("%o"), " into the box.")),
+   @tellroom(13979, "%#", @print(
+    @shortname("%#"), " drops ",
+    @shortname("%o"), " from above, into the room."
+   ))
+  ),
+  @print("You can only put objects in the box if they're owned by Kwi
+   or is set jumpok (set ", @shortname("%o"), " = jumpok).
+   That, and you can put yourself into it.
+   Go on. Try it. You know you want to."
+  )
+ )
+))</pre>
+<h2>Step 7: Taking things from the box</h2>
+<p>Taking is quite easy to implement, since we can use the same subroutine that we used to examine objects in step 4.</p>
+<pre>@action take * from box;remove * from box = box : nowhere
+@set take * from box = puzzle
+
+@success take * from box = @call(13993, "findobj");
+ @let("o", @getfield(13993, "obj"), @switch(-1,
+  "%o", "",
+  @getfield("%o", "notake"), "Removing that from the box would have a
+   severe negative effect on the Banana for President campaign.
+   And we can't have that.",
+  @print(
+   @move("%o", "%#"),
+   @switch(@location("%o"),
+    "%#", @print(
+     "You take ", @shortname("%o"), " from the box.",
+     @tellroom(@location(13993), "%#", @print(
+      @shortname("%#"), " takes ", @shortname("%o"), " from the box."
+     )),
+     @tellroom(13979, "%#", @print(
+      @shortname("%#"), " reaches into the room from above and takes ",
+      @shortname("%o"), "."
+     ))
+    ),
+    @print("You can only take items in the box that are owned by Kwi
+     or is set jumpok, which is not the case here.")
+   )
+  )
+ ))</pre>
+<p>Note that, in both step 5 and 7, we tell the @location of the box, not the @toploc. This is deliberate, since we don't want the player's location to see any messages, if the player is holding the box.</p>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

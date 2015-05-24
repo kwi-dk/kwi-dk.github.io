@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Miscellaneous ifMUD-code</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 11</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/ifmud/">ifMUD</a>: Miscellaneous ifMUD-code</div>
+<h1>Miscellaneous ifMUD-code</h1>
+<p>No comments for these. The code should be self-explanatory.</p>
+<p>See also the <a href="misc.jc">Jota Code Compiler version</a>.</p>
+<h2>Pirate hat</h2>
+<p class="input">&gt; <span>drop hat</span></p>
+<p>You drop pirate hat.</p>
+<p class="input">&gt; <span>"Arr, a prize, for the winning pirate!</span></p>
+<p>Kwi says, "Arr, a prize, for the winning pirate!"</p>
+<p class="input">&gt; <span>x hat</span></p>
+<p>The fearsome hat features a proud Jolly Roger. No doubt it was once worn by a bloodthirsty pirate, but now it just sits there and looks like it's been forgotten, a left-over from a time where people would drink rum, trade favours and gold coins, plan mutinies, and keelhaul shipmates. Aye, just by looking at the hat, you start longing for sailing the seven seas. Yarr!<br /><br />
+schep gets pirate hat.</p>
+<p class="input">&gt; <span>x schep's hat</span></p>
+<p>The fearsome hat features a proud Jolly Roger, and the text "Schep, Pirate Captain!", below. Aye, just by looking at the hat, you start longing for sailing the seven seas. Yarr!</p>
+<pre>@create pirate hat
+@set pirate hat = jumpok
+@desc pirate hat = @print(
+ "The fearsome hat features a proud Jolly Roger",
+ @switch(@type(@location("%!")),
+  2, @print(
+   ", and the text \"",
+   @ucfirst(@shortname(@location("%!"))),
+   ", Pirate Captain!\", below."
+  ),
+  ". No doubt it was once worn by a bloodthirsty pirate, but now it
+   just sits there and looks like it's been forgotten, a left-over
+   from a time where people would drink rum, trade favours and gold
+   coins, plan mutinies, and keelhaul shipmates."
+ ),
+ " Aye, just by looking at the hat, you start longing for sailing the seven seas. Yarr!"
+)</pre>
+<h2>T-shirt with arrow</h2>
+<p class="input">&gt; <span>x t-shirt</span></p>
+<p>Below the arrow, the text "HE CANT HELP IT!" is printed on the t-shirt. The arrow is, however, pointing upwards, implying that the person in question is Kwi himself.</p>
+<pre>
+@field T-shirt = textm : HE
+@field T-shirt = textf : SHE
+@field T-shirt = textn : IT
+
+@field T-shirt = reflectm : himself.
+@field T-shirt = reflectf : herself.
+@field T-shirt = reflectn : itself.
+
+@desc T-shirt = @let("x", @switch("1",
+ @testflag(@location("%!"), "male"), "m",
+ @testflag(@location("%!"), "female"), "f",
+ "n"),
+ @print(
+  "Below the arrow, the text \"",
+  @g("text%x"),
+  " CANT HELP IT!\" is printed on the T-shirt. The arrow is, however,
+   pointing upwards, implying that the person in question is ",
+  @shortname(@location("%!")),
+  " ",
+  @g("reflect%x")
+ )
+)</pre>
+<h2>Faceless head/Headless face</h2>
+<p class="input">&gt; <span>x kwi</span></p>
+<p>It looks like an ordinary Kwi to me.<br />
+Carrying: headless face, T-shirt with arrow</p>
+<p class="input">&gt; <span>x kwi's head</span></p>
+<p>Wait... isn't it actually a faceless head?</p>
+<p class="input">&gt; <span>x kwi</span></p>
+<p>It looks like an ordinary Kwi to me.<br />
+Carrying: faceless head, T-shirt with arrow</p>
+<pre>
+@field head = name0 : faceless head;face;faceless;head;flh;fh;headless;hlf;hf
+@field head = name1 : headless face;face;faceless;head;flh;fh;headless;hlf;hf
+
+@desc head = @let("x", @g("toggle"), @print(
+ @s("toggle", @not("%x")),
+ @s("name", @g("name%x")),
+ "Wait... isn't it actually a ",
+ @shortname("%!"),
+ "?"
+))
+</pre>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

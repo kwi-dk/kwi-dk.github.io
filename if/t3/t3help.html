@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Quick reference</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 15</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: Quick reference</div>
+<h1>Quick reference</h1>
+<p><b>T3 Help</b> is a TADS 3 program that provides a quick reference
+to most classes in the TADS 3 libraries.</p>
+<p>It does that by reading the actual source files and extract
+comments.
+The good thing is that it's never out of date. When you download an
+updated library, you just run <b>T3 Help Generator</b> and after 5
+to 15 minutes, you have a fresh help file.</p>
+<p>The bad thing is, of course, that the program isn't that clever.
+For instance, it chokes on macros, causing it to think that
+actions.t is practically empty. So, you can't use it to look up
+actions.<br />
+However, it's usefull when you, say, can't remember how to link two
+Door objects together, and similar situations.</p>
+<p><img src="t3help-screen.png" alt=
+"Screenshot from T3 Help in the HTML TADS interpreter." /></p>
+<h2>Download</h2>
+<p>You can't download the compiled help file here - it's roughly 1.6
+MB big.</p>
+<p>Instead, download <a href="t3help.zip">this ZIP-file</a>, which
+contains both the help-generator and the help-viewer.</p>
+<p>In <b>t3helpgen.t</b>, modify the following macros as appropriate
+for your system:<br />
+<tt>#define BASE_PATH '/Program/TADS3/'<br />
+#define MAIN_INC_PATH 'include/'<br />
+#define MAIN_LIB_PATH 'lib/'<br />
+#define ADV3_LIB_PATH 'lib/adv3/'<br />
+#define LANG_LIB_PATH 'lib/adv3/en_us/'</tt><br />
+Then compile and run t3helpgen.t.</p>
+<p>When t3helpgen.t has finished, you can compile and run t3help.t to
+browse the help file.
+Notice that compiling may also take some time, as it needs to
+compile the 1.6 MB big t3help_hlp.h file that t3helpgen.t
+generated.
+</p>
+<h2>HTML TADS</h2>
+<p>I admit it: T3 Help works best in HTML TADS. It does also run in
+the 32-bit text-interpreter, but the lack of scollbars makes it a
+lot less usefull.<br />
+I'm pretty sure it won't run on 16-bit interpreters at all, as some
+of the data structures it uses exceeds 64 KB.</p>
+<p>Of course, you have the source now, you can try to fix it if you
+want to.</p>
+<h2>Known bugs</h2>
+<p>Yeah, it's still buggy.<br />
+T3 Help tries to handle large pages (like the page for Thing)
+gracefully, by only showing the relevant part of the page, when you
+follow a link to, say, moveInto().<br />
+However, this doesn't always work, and you end up with an empty
+page.<br />
+In that case, click on [ Full page ] or type <tt>.full</tt>.</p>
+<p>As mentioned, it doesn't understand macros, and often tries to
+interpret them as functions.<br />
+And finally, it doesn't remove explicit linebreaks from
+comments.</p>
+<pre>
+/*   Explicit line break:
+ *.  &lt;-- Like this.            */
+</pre>
+<br />
+<p>
+And there's a few cases where it fails to interpret the syntax
+correctly.<br />
+But despite all this, it's still rather useful.</p>
+<p>In my opinion, anyway.</p><p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

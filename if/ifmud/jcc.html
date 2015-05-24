@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>JotaCode Compiler</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 6</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/ifmud/">ifMUD</a>: JotaCode Compiler</div>
+<h1>JotaCode Compiler</h1>
+<p>Inspired by Andrew Schepler's <a href="http://www.msu.edu/user/schepler/jcbl.html">JotaCode Builder Language</a>,
+I've created my own JotaCode compiler.</p>
+<p>The <a href="jcc.t3">compiler itself</a> is a TADS 3-program (27,3 kB) and requires a recent TADS 3-interpreter, as described on my
+<a href="../games/">games-page</a>.</p>
+<p>You can also <a href="jcc-src.zip">download the compiler source code</a> and compile it yourself.</p>
+<p>(No experience with TADS 3 development is needed to use JCC. TADS 3 just
+happens to be a language I like, and JCC could just as well have been written in
+Perl, C++ or Pascal.)</p>
+<p>JCC can be run with no parameters, in which case it'll allow you to type code
+and have it compiled "live" (that is, as you enter the code.) Alternately, you
+can specify an input file. Your interpreter settings might have to be
+adjusted to allow JCC to access the file.</p>
+<p>Sample use: <tt>t3run -plain jcc.t3 mycode.jc mycode.out</tt><br />
+Or: <tt>t3run -plain jcc.t3 mycode.jc CON:</tt> to display compiled JotaCode on screen (using DOS/Windows).</p>
+<?php /*
+ <p><i>You can now (again) <a href="http://www.student.dtu.dk/~s030812/jcc">try the JotaCode Compiler online</A>.</i>
+ */?>
+
+<h2>Known problems/to-do list</h2>
+
+<ul>
+<li>No way to #include other files without using a separate preprocessor.</li>
+<li>Semicolon requires after statement-blocks (enclosed in curly braces.)</li>
+<li>Floating-point numbers must, at the moment, be entered in quotation-marks.</li>
+<li>Possibly: <tt>give x "flag"</tt> as a syntax for @setfield.</li>
+</ul>
+
+<p>There's always room for improvements.</p>
+
+<h2>Sample code</h2>
+
+<pre>headlessFace: thing #14125
+{
+    name = "-";
+    name0 = "faceless head;face;faceless;head;flh;fh;headless;hlf;hf";
+    name1 = "headless face;face;faceless;head;flh;fh;headless;hlf;hf";
+
+    description = {
+        let "x" = .toggle;
+        .toggle = !%x;
+        .name = .name[%x];
+        "Wait... isn't it actually a "; shortname(this); "?";
+    };
+};</pre>
+<p>That code will result in exactly this output from the compiler (sans linewrapping):</p>
+<pre>@create - [as #14125]
+@field #14125=name0:faceless head;face;faceless;head;flh;fh;headless;hlf;hf
+@field #14125=name1:headless face;face;faceless;head;flh;fh;headless;hlf;hf
+@desc #14125=@let("x",@g("toggle"),@print(
+  @s("toggle",@not("%x")),
+  @s("name",@g("name%x")),
+  "Wait... isn't it actually a ",@shortname(14125),"?"
+))</pre>
+
+<p>You can download <a href="jc/misc.jc">the JCC-code</a> for <a href="misc">my miscellaneous MUD-code</a>,
+or <a href="jc/wolftest.jc">the JCC-code</a> for <a href="wolftest">the werewolf test</a>.</p>
+
+<h2>Documentation</h2>
+<p>Yes, the JotaCode Compiler sure lacks proper documentation. Sorry about that. Here are examples of some of the language features.
+Also have a look at the sample code above.</p>
+
+<h2>Operators and special values</h2>
+<p><tt>+</tt>, <tt>-</tt>, <tt>*</tt>, <tt>/</tt>, <tt>( )</tt>, <tt>!</tt> work as you'd expect.</p>
+<p>Use <tt>{ a; b; c; }</tt> or <tt>a &amp; b &amp; c</tt> to concatenate strings.</p>
+<p><tt>and</tt> and <tt>&amp;&amp;</tt>, <tt>or</tt> and <tt>||</tt> works too, and so does <tt>xor</tt>.</p>
+<p>Compare values using <tt>==</tt>, <tt>!=</tt>, <tt>&lt;</tt>, <tt>&gt;</tt>, <tt>&lt;=</tt> and <tt>&gt;=</tt>.</p>
+<p>For integer division and modulos, use <tt>div</tt> and <tt>mod</tt> (<tt>/</tt> performs floating-point division.)</p>
+<p>Use <tt>has</tt> and <tt>hasnt</tt> to test flags, as in <tt>#123 has "male"</tt>.</p>
+<p>Use <tt>is</tt> and <tt>isnt</tt> to test type or location of an object, as in <tt>#123 is player</tt>, <tt>%x is on %y</tt>, <tt>#123 isnt in #14</tt>.</p>
+<p>JCC also has <tt>cond ? if_true : if_false</tt>, which is exactly the same as <tt>if (cond) if_true; else if_false;</tt>
+ - as all statements are valid expressions.</p>
+<p><tt>++</tt>, <tt>--</tt>, <tt>+=</tt> and the like, and <tt>,</tt> as an operator (as in <tt>.foo = stuff(), %x;</tt>) are NOT supported.</p>
+<p><tt>varobj</tt> refers to the same object as <tt>@g</tt> and <tt>@s</tt> uses (i.e. "%!", unless "%!" defines a "varobj" field.)</p>
+<p><tt>this</tt> refers to the object currently being defined (using the <tt>object</tt> keyword.) Using <tt>this</tt> outside an object definition causes a compiler error.</p>
+<p><tt>foo.bar</tt> refers to the field "bar" on object #foo.</p> <p><tt>foo.bar[123]</tt> refers to the field "bar123" on object #foo.</p>
+<p><tt>.foo</tt> equals <tt>varobj.foo</tt>.</p>
+<p><tt>foo.bar()</tt> (or <tt>.bar()</tt>) <tt>@call</tt>s the field "bar" on #foo (or <tt>varobj</tt>).</p>
+
+<h2>Language features</h2>
+<pre>{ let "x" = @location("%#"); "You're in #%x!"; };
+@let("x",@location("%#"),"You're in #%x!")</pre>
+
+<pre>contentsloop ("o" in #14) { "In the lounge there is "; @shortname("%o"); "%c"; };
+@contentsloop(14,"o",@print("In the lounge there is ",@shortname("%o"),"%c"))</pre>
+
+<pre>fieldloop (#1234 by "a_") "Field is %f, value is %v";
+@fieldloop(1234,"a_","Field is %f, value is %v")</pre>
+
+<pre>strloop ("x" in "hello world") if (%x == "l") "Boo!";
+@strloop("hello world","x",@switch(1,@eq("%x",l),"Boo!"))</pre>
+
+<p>(I'm perfectly well aware of the non-optimized code there, and I'm working on it.)</p>
+
+<pre>const repeat_string = #14468.longstring;    repeat (12345.cnt) "Foo!";
+@strloop(@substr(@getfield(14468,"longstring"),0,@getfield(12345,"cnt")),"repeat_","Foo!")</pre>
+
+<pre>switch (expr) { case 1, 2, 3: ...; case "xyz": ...; default: ...; }
+@switch(expr,{1,2,3},...,"xyz",...,...)</pre>
+
+<pre>say "Boo!"; osay "Moo!"; rsay "Ook!";
+@print( @tell("%#","Boo!"),
+        @tellroom(@location("%#"),"%#","Moo!"),
+        @tellroom(@location("%#"),"","Ook!") )</pre>
+
+<h2>Object definitions</h2>
+<p>The object definitions can be written in a dozen of different styles. Pick the one you like.</p>
+
+<p>
+<tt>myFooBar: thing #1234 in #475 has "jumpok"<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name = "foobar";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name = "foo" &amp; 'bar';<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name: "foobar";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name() = "foobar";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name() = { "foo"; "bar"; };<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name() { "foobar"; };<br />
+};</tt></p>
+
+<p>The complete syntax is: (<i>[]</i> means optional part, <i>[]*</i> means repeatable part.)</p>
+
+<p>[ identifier<tt>:</tt> ] (<tt>thing</tt>|<tt>room</tt>|<tt>action</tt>|<tt>exit</tt>|<tt>player</tt>) object_ID [(<tt>in</tt>|<tt>on</tt>) location]
+[<tt>has</tt> flag1 [<tt>,</tt> flag2]*]<br />
+<tt>{</tt><br />
+&nbsp;&nbsp;&nbsp;[&nbsp;(<tt>field</tt>|<tt>"</tt>field<tt>"</tt>) [<tt>(</tt> (0+ parameters)<tt>)</tt>] [<tt>:</tt>|<tt>=</tt>] statement <tt>;</tt>&nbsp;]*<br />
+<tt>};</tt></p>
+
+<p>A statement can be a simple value or a statement-block in braces. Note that action and exit is exactly the same thing.</p>
+
+<p>JCC also provides a special syntax for defining arrays on objects:</p>
+
+<p><tt>calendar: thing #12345<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;name = "calendar";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;wd[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];<br />
+&nbsp;&nbsp;&nbsp;&nbsp;description() { "Today is "; .wd[time("wday")]; ". The week has "; arraylen("wd"); " days. "; };<br />
+};</tt></p>
+
+<p>Note that <tt>arraylen</tt> is a compiler construct, that it's always evaluated at compile-time, and that it can only be used for
+arrays defined using the special array definition.</p>
+
+<p>Also note that <tt>arraylen("wd")</tt> is the same as <tt>arraylen(this.wd)</tt>, and that the latter syntax can be used to
+retrieve lengths of arrays defined for other objects.</p>
+
+<h2>Alternate syntax</h2>
+
+<p>JCC provides several minor variations in syntax for many of its constructs.</p>
+<p><tt>if (foo) bar;</tt> can be written simply as <tt>if foo bar;</tt>, if you don't mind confusing code, or as <tt>if foo then bar;</tt></p>
+
+<p>Generally, parentheses can be left out in many constructs:<br />
+<tt>switch foo { ... };</tt><br />
+<tt>contentsloop "o" in #14 { ... };</tt><br />
+<tt>strloop "x" in "12345" { ... };</tt><br />
+<tt>fieldloop #1234 by "a_" { ... };</tt></p>
+
+<p><tt>const</tt>-values don't actually have to be constant, and you can list more than one definition after <tt>const</tt>:<br />
+<tt>const player = "%#", playerloc = @location(player);  @tellroom(playerloc, -1, "BAH!");<br />
+@tellroom(@location("%#"),-1,"BAH!")</tt></p>
+
+<p>Numbers can optionally be prefixed with a <tt>#</tt>.</p>
+
+<p>Standard JotaCode can be used just as well as the special syntax for switch, contentsloop, etc.</p>
+
+<p><tt>varobj.x</tt> can be written simply as <tt>.x</tt> (and compiles to <tt>@g("x")</tt>.)</p>
+
+<p><tt>"%#"</tt> can be written simply as <tt>%#</tt>, and <tt>"%{stuff}"</tt> can be written as <tt>%stuff</tt>.</p>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

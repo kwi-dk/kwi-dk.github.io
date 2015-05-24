@@ -1,0 +1,78 @@
+/*
+ *  Miscellaneous ifMUD-code
+ */
+
+////// Pirate hat //////
+
+pirateHat: thing #13945 has "jumpok"
+{
+    name = "pirate hat;hat";
+    
+    description()
+    {
+        "The fearsome hat features a proud Jolly Roger";
+        if (location(this) is player)
+        {
+            ', and the text "';
+            ucfirst(shortname(location(this)));
+            ', Pirate Captain!", below.';
+        };
+        else
+        {
+            ". No doubt it was once worn by a bloodthirsty pirate, but now it
+             just sits there and looks like it's been forgotten, a left-over
+             from a time where people would drink rum, trade favours and gold
+             coins, plan mutinies, and keelhaul shipmates.";
+        };
+        " Aye, just by looking at the hat, you start longing for sailing the
+         seven seas. Yarr!";
+    };
+
+};
+
+////// T-shirt //////
+
+t_shirt: thing #14135
+{
+    name = "T-shirt with arrow;shirt;tee shirt with arrow;t shirt with arrow;tee-shirt with arrow;arrow;tswa;t-swa";
+    textm = "HE";
+    textf = "SHE";
+    textn = "IT";
+    reflectm = "himself.";
+    reflectf = "herself.";
+    reflectn = "itself.";
+
+    description = {
+        let "x" = {
+            if (location(this) has "male") "m";
+            else if (location(this) has "female") "f";
+            else "n";
+        };
+
+        'Below the arrow, the text "';
+        this.text[%x];
+        ' CANT HELP IT!\" is printed on the T-shirt. The arrow is, however,
+         pointing upwards, implying that the person in question is ';
+        shortname(location(this));
+        " ";
+        this.reflect[%x];
+    };
+};
+
+////// Headless face/Faceless head //////
+
+headlessFace: thing #14125
+{
+    name = "-";
+    name0 = "faceless head;faceless head;flh;fh;headless face;hlf;hf";
+    name1 = "headless face;faceless head;flh;fh;headless face;hlf;hf";
+
+    description = {
+        let "x" = this.toggle;
+        this.toggle = !%x;
+        this.name = this.name[%x];
+        "Wait... isn't it actually a "; shortname(this); "?";
+    };
+};
+
+////

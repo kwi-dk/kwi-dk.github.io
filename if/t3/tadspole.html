@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>TADSpole</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 18</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: TADSpole</div>
+<h1>TADSpole</h1>
+<p>TADSpole is a small TADS 3 program that can load another T3
+game/program ("image"), and dump its contents.</p>
+<p>It's very much in beta still, in part because the T3 binary
+format is rather difficult to analyze beyond the high level block
+structure.</p>
+<p>TADSpole, being a T3 program, will run under any T3 interpreter
+that supports banners. However, in practice you'll need a more
+advanced interpreter, supporting scrollbars and such.</p>
+<p>That means HTML TADS on Windows, and, uh... something similar,
+on other platforms.</p>
+<h2>Download</h2>
+<p><a href="tadspole.t3">tadspole.t3</a> (46 kB executable, version 0.2).</p>
+<p><a href="tadspole-src.zip">tadspole-src.zip</a> (26 kB source code archive, version 0.2).</p>
+<h2>Features of TADSpole</h2>
+<ul>
+<li>Supports all image blocks, except the Global Symbol Table
+Block.</li>
+<li>Obtains symbolic names for the values exported in the Symbolic
+Names Block.</li>
+<li>Tries to decode constant data pool pages into strings and lists
+using heuristics (though, it isn't very good at it.)</li>
+<li>Allows you to show embedded text files (such as GameInfo.txt)
+in multimedia blocks.</li>
+<li>Enables you to see the time of compilation of the image.</li>
+<li>Comes with a nifty hex viewer for examining blocks.</li>
+<li>Can dump blocks to file.</li>
+<li>Will dump TadsObjects in a quite indecipherable format for your
+viewing pleasure.</li>
+<li>Also supports Vector and CharacterSet objects.</li>
+<li>Has limited support for the IntrinsicClass and 'int-class-mod'
+objects.</li>
+</ul>
+<h2>To-do</h2>
+<ul>
+<li>Commandline interface.</li>
+<li>Support for all metaclasses (once Mike writes up some specs for
+those, or I reverse engineer them.)</li>
+<li>Naming of objects, properties etc. (using heuristics.)</li>
+<li>Location tree dump (using above data.)</li>
+<li>A better analysis of constant data pools (using better
+heuristics.)</li>
+<li>Disassembly of constant code pools. (Guess what? Heuristics
+will be neccessary here, too!)</li>
+</ul><p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

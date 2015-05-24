@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>&quot;Are you a werewolf&quot; test</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 10</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/ifmud/">ifMUD</a>: &quot;Are you a werewolf&quot; test</div>
+<h1>"Are you a werewolf" test</h1>
+<p>See also the <a href="wolftest.jc">Jota Code Compiler version</a>.</p>
+<h2>The questions</h2>
+<p>On the test object, we store several variables with a one-letter identifier. The 'q' variable holds the current question number, 'w' holds the wolfiness-score of the player, and 'o' holds 1 if the player's favourite insect is a carpenter ant.</p>
+<p>The variables are stored on the form "ply%l%#" where %l is the one-letter identifier and %# is the player ID.</p>
+<p>All variables are reset to 0 when the test starts, except for 'q' which starts at 1. (In retrospect, there's no reason why 'q' couldn't start at 0, but changing it now would mean changing the names of all the question fields.)</p>
+<p>The test system is rather simple, actually. Each choice is stored in a separate field. First comes the choice-text, then a tilde (~), and then one or more variable letters. Each variable listed will be incremented by one. If the variable is listed twice, it'll be incremented twice. And so on.<br />
+Finally, for fancy effects, the variable-list can be followed by an at-sign and some JotaCode to execute.</p>
+<p>Furthermore, question-texts are @called, which means we can put JotaCode in them.</p>
+<p>This is also used for the final evaluation, where test-results are printed. This code is simply the text of question 11.<br />
+Note how the variable list of all choices start with a 'q'. This is to advance to the next question (as the question number is stored in 'q'.)</p>
+<p><tt>@create wolf test;test</tt><br />
+(wolf test is created as object #14312.)<br />
+<tt>@set test = expert</tt></p>
+<p><tt>
+@field test = q1: 1. My favorite type of bug is a...<br />
+@field test = q1_a: Carpenter ant~qo<br />
+@field test = q1_b: Wolf spider~qw</tt><br />
+(If the player picks A, we increase the "o" variable, if B we increase the "w" variable. In both cases, we also increase the "q" variable.)
+<br />
+<tt>@field test = q2: @print("2. To keep ", @switch("%s", "he", "a clean-shaven face", "she", "clean-shaved legs", "clean-shaved"), ", I have to shave...")</tt><br />
+(Print "To keep a clean-shaved face"/"To keep clean-shaved legs"/"To keep clean-shaved" depending on the player's sex.)<br /><br />
+<tt>@field test = q2_a: Once a week~q<br />
+@field test = q2_b: Occasionally~q<br />
+@field test = q2_c: Once a day~qwm@print("Yeow. ")<br />
+@field test = q2_d: Continuously~qww@print("Yeow! ")</tt><br />
+(Print "Yeow" if the player needs to shave once a day or even more often.)<br />
+<br />
+(...)<br />
+<br />
+<tt>@field test = q11:<br />
+&nbsp;@print("You are... ");<br />
+&nbsp;@switch(1,<br />
+&nbsp; @gt(@g("plyw%#"), 12), "A WOLF!",<br />
+&nbsp; "NOT a wolf."<br />
+&nbsp;);<br />
+&nbsp;@switch(@g("plyo%#"), "1", " Also, you hate wood.");<br />
+&nbsp;@print("%cNot satisfied with your test results?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Try again, or mud-mail Kwi!");<br />
+&nbsp;@s("plyq%#", ""); <i>// Clear question number.</i><br />
+&nbsp;@tellroom(@location("%!"), "%#", @print(<br />
+&nbsp; "%n has taken the \"Are you a wolf\"-test, and %s is... ",<br />
+&nbsp; @switch(1,<br />
+&nbsp;&nbsp; @gt(@g("plyw%#"), 12), "a WOLF! Quick, lynch %o before it's too late!",<br />
+&nbsp;&nbsp; "NOT a wolf. (No warranties on the accuracy of this test, though.)"<br />
+&nbsp; )<br />
+ ))<br />
+</tt></p>
+<h2>Showing the question</h2>
+<p>Here's the code we call to print the current question. First we @call the question text (e.g. "q2"), then we run through all choices (e.g. "q2_a") and print them.<br />
+Note that the choices appear in alphabetic order only through some kind of sheer luck. :)</p>
+<p><tt>@field test = showq : @let("q", @g("plyq%#"), @print(<br />
+&nbsp;@call("%!", "q%q"), <i>// E.g. "q2"</i><br />
+&nbsp;@fieldloop("%!", "q%q_", @print(<br />
+&nbsp; "%c",<br />
+&nbsp; @uc(@substr("%f", @strlen("q%q_"), 1)), <i>// Uppercase choice-letter</i><br />
+&nbsp; ") ",<br />
+&nbsp; @substr("%v", 0, @index("%v", "~")) <i>// Print text up to the "~"</i><br />
+&nbsp;))<br />
+)</tt></p>
+<p>Here's the code/text we show when no test is in progress. Notice, also, that we show a fake "Obvious Actions:"-line. All the actions are in fact set dark.</p>
+<p><tt>@field test = desc_ : Are YOU a werewolf? Take this short (10 questions) test and find out! We've got to catch those filthy werewolves, after all.%cBased on the original "Are you a werewolf" book-object. Mud-mail comments and suggestions to Kwi.%cObvious Actions: take test</tt></p>
+<p>Finally, the actual test-description. Here, we see if a test is in progress (for the current player). If there is, we call showq, then show a fake "Obvious Actions:"-line listing all choices. If not, we show the "desc_".</p>
+<p><tt>@desc test = @let("q", @g("plyq%#"), @switch("%q",<br />
+&nbsp;"", @call("%!", "desc_"),<br />
+&nbsp;@print(<br />
+&nbsp; @call("%!", "showq"),<br />
+&nbsp; "%cObvious Actions: ",<br />
+&nbsp; @fieldloop("%!", "q%q_",<br />
+&nbsp;&nbsp; @print("answer ", @uc(@substr("%f", @strlen("q%q_"), 1)), ", ")<br />
+&nbsp; ),<br />
+&nbsp; "start over"<br />
+&nbsp;)<br />
+))</tt></p>
+<h2>Starting the test</h2>
+<p><tt>@action take test;test me;start test;start over = test : nowhere<br />
+@set take test = dark<br />
+@success take test = @call(14312, "taketest")<br />
+<br />
+@field test = intro : Welcome to the "Are you a werewolf"-test! Here comes the first question:%c<br /><br />
+
+@field test = taketest : @call("%!", "intro");<br />
+&nbsp;<i>// Clear old variables for current player:</i><br />
+&nbsp;@fieldloop("%!", "ply",  @switch(@substr("%f", 4), "%#", @s("%f", "")) );<br />
+&nbsp;@s("plyq%#", 1);<br />
+&nbsp;<i>// Show full description, including the fake Obvious Actions</i><br />
+&nbsp;@call("%!", "description")</tt></p>
+<h2>Answering questions</h2>
+<p>This is the nasty bit. Here we parse the player input, then parse the choice-field into choice-text, variable-list and (optional) JotaCode. Ready? Here we go:</p>
+<p><tt>@action answer * = test : nowhere<br />
+@set answer * = puzzle<br />
+@set answer * = dark<br />
+@success answer * = @let("q", @getfield(14312, "plyq%#"), @switch("%q",<br />
+&nbsp;<i>// No test in progress?</i><br />
+&nbsp;"", "I think the command you're looking for is TAKE TEST.%c<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (The test is unreliable enough as it is,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; there's no need to answer questions before they're asked.)",<br />
+&nbsp;@switch(@strlen("%0"),<br />
+&nbsp;<i>// Player typed exactly one char (E.g. ANSWER B, and not ANSWER SPIDER.)</i><br />
+&nbsp; 1, @switch(@getfield(14312, "q%q_%0"),<br />
+&nbsp;&nbsp; "", @print(<br />
+&nbsp;&nbsp;&nbsp; @uc("%0"), " was not one of the choices.<br />
+&nbsp;&nbsp;&nbsp; (LOOK AT TEST if you've forgotten the question.)"<br />
+&nbsp;&nbsp;),<br />
+&nbsp;&nbsp; @call(14312, "handleanswer")<br />
+&nbsp; ),<br />
+&nbsp; "Sorry, answer what? (Please specify a single letter, as in ANSWER A.)"<br />
+ )<br />
+))</tt></p>
+<p>The effect of the code above is that we check if it was a valid choice, and if so, call "handleanswer".</p>
+<p><tt><i>// Now, %0 holds the answer-letter.</i><br />
+@field test = handleanswer : @let(<br />
+&nbsp;"x", @g(@print("q", @g("plyq%#"), "_%0")),<br />
+&nbsp;@let("i", @add(@index("%x", "~"), 1), "j", @index("%x", "@"),<br />
+&nbsp; <i>// Okay, now %x holds the entire choice-field,<br />
+&nbsp; // %i the position of "~" in %x PLUS one,<br />
+&nbsp; // and %j the position of "@" in the text (or -1 if no @.)</i><br />
+&nbsp; @print(<br />
+&nbsp;&nbsp; <i>// Increment variables</i><br />
+&nbsp;&nbsp; @strloop(<br />
+&nbsp;&nbsp;&nbsp; @switch("%j",<br />
+&nbsp;&nbsp;&nbsp;&nbsp; -1, @substr("%x", "%i"),<br />
+&nbsp;&nbsp;&nbsp;&nbsp; @substr("%x", "%i", @sub("%j", "%i"))<br />
+&nbsp;&nbsp;&nbsp; ),<br />
+&nbsp;&nbsp;&nbsp; "c",<br />
+&nbsp;&nbsp;&nbsp; @s("ply%c%#", @add(@g("ply%c%#"), 1))<br />
+&nbsp;&nbsp; ),<br />
+&nbsp;&nbsp; <i>// Execute the JotaCode (if any)</i><br />
+&nbsp;&nbsp; @switch("%j",<br />
+&nbsp;&nbsp;&nbsp; -1, "",<br />
+&nbsp;&nbsp;&nbsp; @execute(@substr("%x", "%j"))<br />
+&nbsp;&nbsp; ),<br />
+&nbsp;&nbsp; <i>// Confirm the choice, show next question</i><br />
+&nbsp;&nbsp; "\"",<br />
+&nbsp;&nbsp; @substr("%x", 0, @sub("%i", 1)),<br />
+&nbsp;&nbsp; "\" it is.%c",<br />
+&nbsp;&nbsp; @call("%!", "showq")<br />
+&nbsp;&nbsp;)<br />
+&nbsp;) <br />
+)</tt></p>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>The Democrat Banana</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 7</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/ifmud/">ifMUD</a>: The Democrat Banana</div>
+<h1>The Democrat Banana</h1>
+<p>First, let me say that the Democrat banana is in no way an attempt to send political messages or anything like that,
+it's merely the result of pure juvenileness.</p>
+<h2>How the Democrat banana behaves</h2>
+<p>Nicely. To be more specific, like this:</p>
+<p><b>Atwood's Lounge</b><br />
+Crakes on the oryx-panelled walls create a comfortable dystopian appearance.
+Hand-drawn maps of the corporate compounds and pleeblands are taped to nearly
+every surface. Seating is plentiful, as catastrophic climate change has wiped
+out most of the population. The RejoovenEssencecompound lies to the north.</p>
+<p>You can see: [...] Jewish were-banana, What development environments do you use?, Democrat banana (handling out pamphlets), What K3wlt0k annoys you?</p>
+<p class="input">&gt; <span>x democrat banana</span></p>
+<p>It carries a badge reading "Banana for President 2004!"<br />
+Wow. The Democrats are getting kinda desparate in their search for good candidates. But hey, everybody likes a banana, right?<br />
+Banana notices you looking at it, and promptly hands you a pamphlet.</p>
+<p class="input">&gt; <span>x pamphlet</span></p>
+<p>Wow. You never really thought about this, but what this pamphlet says is true! This country needs a firm banana to lead it into the new millenium!</p>
+<p class="input">&gt; <span>x democrat banana</span></p>
+<p>It carries a badge reading "Banana for President 2004!"<br />
+Wow. The Democrats are getting kinda desparate in their search for good candidates. But hey, everybody likes a banana, right?<br />
+Banana says, "Vote Banana!"</p>
+<p class="input">&gt; <span>drop pamphlet</span></p>
+<p>pamphlet disappears.</p>
+<h2>The pamphlets</h2>
+<p>I ended up creating 22 of these - they'll be set <tt>slippery</tt> later, so they return home when dropped.
+But otherwise, there's nothing special about them. (Here I assume the created pamphlet is #13976.)</p>
+<p><tt>@create pamphlet</tt></p>
+<p><tt>@desc <span class="oid">#13976</span> = <span class="str">Wow. You never really thought about this, but what this pamphlet says is true! This country needs a firm banana to lead it into the new millenium!</span></tt></p>
+<p><tt>@link <span class="oid">#13976</span> = <span class="oid">#13979</span></tt></p>
+<p><tt>@drop <span class="oid">#13976</span> = @null()</tt></p>
+<p><tt>@field <span class="oid">#13976</span> = ohomemsg : <span class="str">disappears.</span></tt></p>
+<p><tt>@teleport <span class="oid">#13976</span> = <span class="oid">#13979</span></tt></p>
+<h2>The banana's description</h2>
+<p>The description should see if there's any spare pamphlets, and if there are, move one to the player.</p>
+<p>We keep the pamphlets in room 13979 and use <tt>@object</tt> to pick one. 
+The @tell(12456) command notifies me whenever someone receives a pamphlet.</p>
+<pre>
+@desc <span class="oid">db</span> = @print(
+ <span class="str">"It carries a badge reading \"Banana for President 2004!\"%c
+  Wow. The Democrats are getting kinda desparate in their search
+  for good candidates. But hey, everybody likes a banana, right?%c"</span>,
+ @switch(@object(<span class="oid">"%#"</span>, "pamphlet"), <span class="oid">"-1"</span>,
+  @let("x", @object(<span class="oid">13979</span>, "pamphlet"),
+   @switch(<span class="oid">"%x"</span>, <span class="oid">"-1"</span>,
+    <span class="str">"The banana notices you looking at it, and says,
+    \"I'm afraid I'm out of pamphlets. But vote Banana!\""</span>,
+    @print(
+     <span class="str">"Banana notices you looking at it,
+      and promptly hands you a pamphlet."</span>,
+     @tell(<span class="oid">12456</span>, <span class="str">"[%n receives a pamphlet.]"</span>),
+     @setflag(<span class="oid">"%x"</span>, "slippery"),
+     @move(<span class="oid">"%x"</span>, <span class="oid">"%#"</span>)
+    )
+   )
+  ),
+  <span class="str">"Banana says, \"Vote Banana!\""</span>
+ )
+)
+</pre>
+<h2>The banana's fail-message</h2>
+<p>While passing the banana can be quite fun, this particular banana is meant to stay in the lounge so it can continue to provide the important public service of handling out pamphlets.</p>
+<pre>
+@lock <span class="oid">db</span> = <span class="oid">-1</span>
+@field <span class="oid">db</span> = fail : @print(<span class="str">"Banana says, \"Excuse me! "</span>,
+ @switch(@object(<span class="oid">"%#"</span>, "pamphlet"), <span class="oid">"-1"</span>,
+  @let("x", @object(<span class="oid">13979</span>, "pamphlet"),
+   @switch(<span class="oid">"%x"</span>, <span class="oid">"-1"</span>,
+    <span class="str">"I'm afraid I don't have any pamphlets you can get.
+     But please, vote Banana.\""</span>,
+    @print(<span class="str">" Oh, and have a pamphlet.\"%c
+           Banana gives you a pamphlet."</span>,
+     @tell(<span class="oid">12456</span>, <span class="str">"[%n receives a pamphlet.]"</span>),
+     @setflag(<span class="oid">"%x"</span>, "slippery"),
+     @move(<span class="oid">"%x"</span>, <span class="oid">"%#"</span>)
+    )
+   )
+  ),
+  <span class="str">"And... vote Banana.\""</span>
+ )
+)
+</pre>
+<h2>Pass the banana</h2>
+<p>This code doesn't actually have anything to do with the Democratic Banana, except that the banana is mentioned in the text the code generates.</p>
+<p>The idea is that the Democrat Banana can pass bananas and other pass-the-banana style objects.<br />
+Of course, as the banana isn't a player, it's all a more or less clever illusion.</p>
+<p>First, to make testing easy, I defined the ID of the Lounge as a separate field on the Banana Room (#14112).</p>
+<p><tt>@field <span class="oid">#14112</span> = lounge_id : <span class="oid">14</span></tt></p>
+<p>There. While testing, I'd then set this field to another room, so I wouldn't disturb the players in the lounge. Now, a subroutine that lists the players in the lounge (or whatever room we use).</p>
+<pre>
+@field <span class="oid">#14112</span> = makeplylist : @s("plycnt", 0);
+ @contentsloop(@g("lounge_id"), "o",
+  @switch("%o", {1691, 10861}, "",
+   @switch(@type(<span class="oid">"%o"</span>), 2,
+    @let("x", @g("plycnt"),
+     @print(
+      @s("ply_%x", <span class="oid">"%o"</span>),
+      @s("plycnt", @add("%x", 1))
+     )
+    ),
+   "")
+  )
+ )
+</pre>
+<p>For each object in the lounge, we see if it's a player (@type() returns 2), and if so, add a field with the player's ID.
+ We also update plycnt to reflect the total number of players in the lounge. And then we also check if the player is Alex (#1691) or Markov (#10861),
+ in which case we don't add it.</p>
+<p>Then comes the @desc of the Banana Room. Whenever an object is @teleported into a room, it evaluates description.<br />
+By putting the clever code in the description, @teleport some_object = #14112 causes some_object to be given to a player in the lounge.<br />
+First we check if it's actually an object (@type() returns 4), then we update the list of players in the lounge, picks a random player ID in the @let statement, and moves the object to that player.</p>
+<pre>@desc <span class="oid">#14112</span> = @switch(@type(<span class="oid">"%#"</span>), 4,
+ @print(
+  @call(<span class="oid">14112</span>, "makeplylist"),
+  @let(<span class="oid">"x"</span>, @g(@print("ply_", @rand(@g("plycnt")) )),
+   @tellroom(@g("lounge_id"), <span class="oid">"-1"</span>, @print(
+    <span class="str">"Democrat banana gives "</span>,
+    @shortname(<span class="oid">"%#"</span>),
+    <span class="str">" to "</span>,
+    @shortname(<span class="oid">"%x"</span>),
+    <span class="str">" and says, \""</span>,
+    @switch(@rand(5),
+     0, <span class="str">"Vote Banana!\""</span>,
+     1, <span class="str">"Banana 2004!\""</span>,
+     2, <span class="str">"Here you go!\""</span>,
+     3, <span class="str">"Banana: The smart choice!\""</span>,
+     <span class="str">"Have a nice day!\""</span>),
+    @move(<span class="oid">"%#"</span>, <span class="oid">"%x"</span>)
+   ))
+  )
+ ),
+ <span class="str">"A big sign says, \"Monkeys not allowed.\" It's not evident
+  why they're not allowed in here, seeing as this is just a
+  temporary stop for passed bananas."</span>
+)
+</pre>
+<p>Finally, for casual viewers, we also provide a normal description of the room.</p>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>

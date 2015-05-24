@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Birthday banner</title>
+<link rel="stylesheet" type="text/css" href="/design/if.css" /></head>
+<body>
+<div id="document">
+<div id="breadcrumbs">
+<span style="float: right">
+Score: 0&nbsp; Moves: 9</span>
+<a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/ifmud/">ifMUD</a>: Birthday banner</div>
+<h1>Birthday banner</h1>
+<p>The birthday banner is automatically updated every day to reflect whose birthday it is.<br />
+It doesn't choke on several people sharing the same birthday.<br />
+On days with no birthdays, it changes name to blank banner.</p>
+<p>First, the banner is created: <tt>@create bdb</tt>. It got the ID #14166.</p>
+<p>Then, we add two name fields, to make the name change easier:<br />
+<tt>@field bdb = name0 : blank banner;banner;bb;bdb<br /><br />
+@field bdb = name1 : birthday banner;birthday;banner;birth day banner;birth;day;birth day;bdb;bdc</tt></p>
+<p>Birthdays are stored on the banner-object, in this format: <tt>bd#PLAYER: DDMMYYYY</tt>.<br />
+For instance, my ID is 12456, and my birthday is October 4, 1985: <tt>bd12456: 04101985</tt>.</p>
+<p>Furthermore, for display purposes, all the month names have been encoded on the banner:</p>
+<pre>@field #14166 = mn1 : Jan
+@field #14166 = mn2 : Feb
+@field #14166 = mn3 : Mar
+@field #14166 = mn4 : Apr
+@field #14166 = mn5 : May
+@field #14166 = mn6 : Jun
+@field #14166 = mn7 : Jul
+@field #14166 = mn8 : Aug
+@field #14166 = mn9 : Sep
+@field #14166 = mn10 : Oct
+@field #14166 = mn11 : Nov
+@field #14166 = mn12 : Dec</pre>
+<h2>Nasty update code</h2>
+<pre><b>@field bdb = update :</b> @s("cnt", 0);
+ <i>// This clears all fields starting with ply:</i>
+ @fieldloop("%!", "ply", @s("%f", ""));
+
+ <i>// Build a date string with two digits for the day and month:</i>
+ @let("x", @print(
+   @let("i", @time("mday"), @switch(@strlen("%i"), 1, "0%i", "%i")),
+   @let("i", @add(@time("mon"), 1), @switch(@strlen("%i"), 1, "0%i", "%i"))
+  ),
+  @print(
+   @tell(12456, "[ BDB update %x ]"),
+ <i>// Find all players with matching birthdays</i>
+   @fieldloop("%!", "bd",
+    @switch(@substr("%v", 0, 4),
+     "%x", @let("c", @g("cnt"), @print(
+      @s("ply%c", @shortname(@substr("%f", 2))),
+      @s("cnt", @add("%c", 1)),
+     )),
+     ""
+    )
+   )
+  )
+ );
+</pre>
+<p>Now we have a 'cnt' field, containing the number of people who has birthday today, and ply0, ply1, etc. fields with their names.<br />
+We'll now run through them all, building a nice namelist and putting it in the field 'strbd'.</p>
+<pre><b>update continued:</b>
+ @s("i", 1);
+ @let("c", @g("cnt"), @print(
+  @s("strbd", @fieldloop("%!", "ply",
+   @let("i", @g("i"), @print(
+    @switch("%i", 1, "", "%c", " and ", ", "),
+    "%v",
+    @s("i", @add("%i", 1))
+   ))
+  )),
+
+  <i>// We also set the 'text' field to the banner text:</i>
+  @s("text", @print("Happy birthday ", @g("strbd"), "!")),
+
+  <i>// Finally, we set the name of the banner:</i>
+  @switch("%c",
+   0, @s("name", @g("name0")),
+   @s("name", @print("banner reading \"", @g("text"), "\";", @g("name1")))
+  )
+ )
+</pre>
+<h2>Banner description</h2>
+<p><tt>@field bdb = note : %c(Use 'write YYYY-MM-DD on banner' to add or change your birthday. Also note that the listing order is arbitrary, and that sorting it would be painfull.)</tt></p>
+<pre>@desc bdb = @print(
+ @switch(@g("cnt"),
+  0, "Today isn't the birthday of any MUDder.",
+  @print("It reads, \"", @g("text"), "\"")
+ ),
+ @call("%!", "note")
+)</pre>
+<h2>Letting players add themselves to the birthday list</h2>
+<p><tt>@set bdb = expert<br /><br />
+@action bdb = write * on bdc = write * on banner;write * on b;write * on bdb;w * on b;w * on bdb<br /><br />
+@set write * on banner = puzzle<br /></tt></p>
+<pre>@success write * on bdb = @switch(@strlen("%0"),
+ 10, @let("d", @add(@substr("%0", 8, 2), 0),
+          "m", @add(@substr("%0", 5, 2), 0),
+          "y", @substr("%0", 0, 4),
+  @print(
+   <i>// If the player hasn't already been added, display a message.</i>
+   @null(@strcheck(
+    @getfield(14166, "bd%#"), <i>// If this is non-empty, we say nothing.</i>
+    @tellroom(@location(14166), "%#", "%n added %r to the banner.")
+   )),
+
+   <i>// Store the birthdate.</i>   
+   @setfield(14166, "bd%#",
+    @print(@substr("%0", 8, 2), @substr("%0", 5, 2), "%y")),
+
+   "Okay, your birthday is ", @getfield(14166, "mn%m"), " %d, %y.",
+   @call(14166, "update")
+  )
+ ),
+ "Please specify the year with four digits,
+  and the month and day with two digits."
+)</pre>
+<h2>Listing all birthdays</h2>
+<p><tt>@action list all birthdays;list all;list birthdays;list all birth days = bdb : nowhere</tt></p>
+<pre>@success list all birthdays = @fieldloop(14166, "bd", @print(
+ @shortname(@substr("%f", 2)),
+ ": ",
+ @getfield(14166, @print("mn", @add(@substr("%v", 2, 2), 0))),
+ " ",
+ @add(@substr("%v", 0, 2), 0),
+ ", ",
+ @substr("%v", 4, 4),
+ ".%c"
+))</pre>
+<h2>Listing specific birthdays</h2>
+<p><tt>@action find birthday of *;list birthday of *;find b of *;b of * = bdb : nowhere<br /><br />
+@set find b of * = puzzle</tt></p>
+<pre>@success find b of * = @let("o", @player("%4"), @switch("%o",
+ -1, "There is no player called '%4' on this MUD.",
+ @print(
+  "The birthday of ",
+  @shortname("%o"),
+  " is ",
+  @let("v", @getfield(14166, "bd%o"), @switch("%v",
+   "", "unknown.",
+   @print(
+    @getfield(14166, @print("mn", @add(@substr("%v", 2, 2), 0))),
+    " ",
+    @add(@substr("%v", 0, 2), 0),
+    ", ",
+    @substr("%v", 4, 4),
+    "."
+   )
+  ))
+ )
+))</pre>
+<h2>Updating the banner every day</h2>
+<p>We calculate how many seconds have passed of the day so far, subtract that from 87000 (24 hours and 10 minutes),
+then create an event that fires shortly after midnight.<br />
+The event should be set to fire some time after midnight, to ensure it doesn't fire <i>before</i> midnight (causing the banner to be wrong for a whole day.)<br />
+We also keep track of the ID, and make sure to kill the old event if it still exists (in case updtimer is called manually.)</p>
+<pre>@field bdb = updtimer : @call("%!", "update");
+ @killevent(@g("updeventid"));
+ @s("updeventid", @event("%!", "updtimer",
+   @sub(87000, @add(@mul(@time("min"), 60), @mul(@time("hour"), 3600))),
+   "Update birthday banner"
+ ))
+</pre>
+<p>Sometimes this fails, leaving the banner without any automatic update event. To handle this, we have a <tt>restart banner</tt> action.</p>
+<pre>
+@action restart banner = bdb : nowhere
+@success restart banner =
+    @print("Curse this Microsoft Birthday Banner vermin!");
+    @null(@call(14166,"updtimer"))
+</pre>
+<p>And that's it.</p>
+<p id="copyright">Copyright 2002-13 <a rel="dc:creator" href="http://www.kwi.dk/about/" property="cc:attributionName">Søren Løvborg</a>.
+The <span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" rel="dc:type">text of this page</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 License</a>.</p></div></body>
+</html>
