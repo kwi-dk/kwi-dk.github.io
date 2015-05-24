@@ -1,0 +1,40 @@
+<urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+                        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+    >
+    <url>
+        <loc>http://www.kwi.dk/</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.80</priority>
+    </url>
+
+    <url>
+        <loc>http://www.kwi.dk/about/</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.90</priority>
+    </url>
+
+    <url>
+        <loc>http://www.kwi.dk/if/</loc>
+        <changefreq>never</changefreq>
+        <priority>0.75</priority>
+    </url>
+
+    <url>
+        <loc>http://www.kwi.dk/if/t3/</loc>
+        <changefreq>never</changefreq>
+        <priority>0.70</priority>
+    </url>
+
+    <url>
+        <loc>http://www.kwi.dk/projects/</loc>
+        <changefreq>yearly</changefreq>
+    </url>
+
+    <url>
+        <loc>http://www.kwi.dk/projects/php/</loc>
+        <changefreq>yearly</changefreq>
+    </url>
+</urlset>
