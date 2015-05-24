@@ -9,8 +9,6 @@
 <body>
 <div id="document">
 <div id="breadcrumbs">
-<span style="float: right">
-Score: 0&nbsp; Moves: 16</span>
 <a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: TADS 2 to TADS 3</div>
 <h1>TADS 2 to TADS 3</h1>
 <p>Here's a list of changes between TADS 2 and 3.</p>
@@ -111,7 +109,7 @@ fearsomeWeapon: Thing
     // Simple values
     weaponLevel = 12
     weaponClass = 'Saber of Dood'
-    
+
     // A simple method (which prints the description)
     desc()
     {
@@ -199,7 +197,7 @@ This code compiles to exactly the same thing, but doesn't use
 templates:
 
 <pre>
-field: OutdoorRoom 
+field: OutdoorRoom
     name = 'In the middle of field'
     desc = "You're standing in a broad field of corn. (Etc.)"
     north = road
@@ -877,7 +875,7 @@ function addVocab(obj, wordProp, word)
 {
     if (obj.(wordProp) == nil) obj.(wordProp) = [word];
     else obj.(wordProp) += word;
-                    
+
     G_dict.addWord(obj, word, wordProp);
 }
 </pre>

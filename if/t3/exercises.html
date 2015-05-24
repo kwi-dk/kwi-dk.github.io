@@ -7,10 +7,10 @@
 <title>Exercises</title>
 <style type="text/css">
 big {
-    font-family: "Cambria", serif; 
-    font-size: 1.5em; 
+    font-family: "Cambria", serif;
+    font-size: 1.5em;
     font-weight: bold;
-    color: #1F497D; 
+    color: #1F497D;
     margin-right: 0.25em;
     width: 2em;
 }
@@ -67,13 +67,11 @@ function handleLoad()
 <body onload="handleLoad()">
 <div id="document">
 <div id="breadcrumbs">
-<span style="float: right">
-Score: 0&nbsp; Moves: 13</span>
 <a href="/">kwi.dk</a>: <a href="/if/">Interactive fiction</a>: <a href="/if/t3/">TADS 3</a>: Exercises</div>
 <h1>Exercises</h1>
 <p>In each section, one or more objects are described. Consider how they might
 be implemented, then click on the question to check the answer.</p>
-<p class="q"><a class="toggle" href="#" onclick="showSol(1);return false;"><big>1.</big> 
+<p class="q"><a class="toggle" href="#" onclick="showSol(1);return false;"><big>1.</big>
 A window that is painted shut. The player shouldn't find out until s/he tries opening it.
 </a></p><div class="solution" id="a1">
 <pre>window: Fixture 'window' 'window'
@@ -84,7 +82,7 @@ A window that is painted shut. The player shouldn't find out until s/he tries op
          *  So verify() allows the action.
          */</span>
         verify() { }
-        
+
         <span class="c">/* But as the player tries to open it, we fail. */</span>
         action()
         {
@@ -100,7 +98,7 @@ A window that is painted shut. The player shouldn't find out until s/he tries op
 read more about the difference in <a href=
 "http://www.tads.org/howto/t3verifyCheck.htm">this technical
 article</a>.</p>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(2);return false;"><big>2.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(2);return false;"><big>2.</big>
 A cooking pot that's too hot to be picked up without gloves.
 </a></p><div class="solution" id="a2">
 <pre>gloves: Wearable 'glove*gloves' 'gloves'
@@ -136,7 +134,7 @@ cookingPot: Container 'hot cooking pot' 'cooking pot'
     }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(3);return false;"><big>3.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(3);return false;"><big>3.</big>
 Now, have the pot contain some edible soup, but require the
 player to be holding a spoon to eat it. If the player isn't holding
 the spoon, but it's reachable, he should take it
@@ -154,7 +152,7 @@ soup: Thing 'hot soup' 'soup' @cookingPot
 
     <span class="c">/* Prevent "pot (which contains a soup)"-type messages. */</span>
     isMassNoun = true
-    
+
     <span class="c">/*
      *  We use preconditions to make sure the player is holding
      *  the spoon. We want the objHeld precondition, but it's
@@ -164,9 +162,9 @@ soup: Thing 'hot soup' 'soup' @cookingPot
      *  We only want to create it once, when the code is compiled,
      *  which is why we add the "static" keyword.
      */</span>
-     
+
     spoonHeldPreCond = static new ObjectPreCondition(spoon, objHeld)
-    
+
     <span class="c">/* Taste is the same as Eat. */</span>
     dobjFor(Taste) asDobjFor(Eat)
 
@@ -185,7 +183,7 @@ soup: Thing 'hot soup' 'soup' @cookingPot
     }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(4);return false;"><big>4.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(4);return false;"><big>4.</big>
 Implement some dynamite with a fuse as a separate component.
 LIGHT DYNAMITE should be the same as LIGHT FUSE, and must require a
 fire source to light the fuse. When the fuse burns out, the
@@ -221,7 +219,7 @@ dynamite: Thing 'dynamite' 'dynamite'
     }
 
     fuelLevel = 4
-    
+
     sayBurnedOut()
     {
         <span class="c">/*
@@ -230,9 +228,9 @@ dynamite: Thing 'dynamite' 'dynamite'
          *  that hides all printed messages, if the player can't see
          *  the dynamite (well, the fuse, to be exact.)
          */</span>
-         
+
         "\bThe dynamite fuse burns out.\b";
-        
+
         if (gPlayerChar.roomLocation == dynamite.roomLocation)
         {
             <span class="c">/*
@@ -251,7 +249,7 @@ dynamite: Thing 'dynamite' 'dynamite'
     }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(5);return false;"><big>5.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(5);return false;"><big>5.</big>
 Code a DefaultAskTellTopic response that takes into account
 what object the player asked about, if any, and uses the literal
 topic text otherwise.
@@ -263,7 +261,7 @@ topic text otherwise.
     {
         <span class="c">/* Find the best match for the specified topic. */</span>
         local topic = gTopic.getBestMatch();
-        
+
         if (topic &amp;&amp; topic.ofKind(Thing))
         {
             <span class="c">/* There's a match, and it's a Thing. */</span>
@@ -286,7 +284,7 @@ topic text otherwise.
    }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(6);return false;"><big>6.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(6);return false;"><big>6.</big>
 A white horse named Black Beauty, and a black horse named White
 Beauty.
 The word "black" used alone should refer to Black Beauty, but
@@ -296,7 +294,7 @@ The word "black" used alone should refer to Black Beauty, but
 <pre>whiteHorse: Actor 'white black beauty/horse' 'Black Beauty'
     <span class="c">/* Avoid "You see the Black Beauty"-type messages. */</span>
     isProperName = true
-    
+
     matchNameCommon(origTokens, adjustedTokens)
     {
         <span class="c">/*
@@ -317,7 +315,7 @@ The word "black" used alone should refer to Black Beauty, but
 
 blackHorse: Actor 'white black beauty/horse' 'White Beauty'
     isProperName = true
-    
+
     matchNameCommon(origTokens, adjustedTokens)
     {
         if (adjustedTokens.indexOf('white')
@@ -329,7 +327,7 @@ blackHorse: Actor 'white black beauty/horse' 'White Beauty'
     }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(7);return false;"><big>7.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(7);return false;"><big>7.</big>
 A player-character with hair, and a comb. The verb COMB should
 also be implemented, allowing both COMB, COMB HAIR and COMB HAIR
 WITH COMB.
@@ -403,7 +401,7 @@ me: Person;
     }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(8);return false;"><big>8.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(8);return false;"><big>8.</big>
 Now, have the player wear a hat initially. Combing the hair
 should be impossible while the hat is worn.
 </a></p><div class="solution" id="a8">
@@ -426,7 +424,7 @@ me: Person
 <p>This example could easily be extended to make the player
 automatically remove the hat, using preconditions.<br />
 Have a look at the OutOfReach class in objects.t to see how.</p>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(9);return false;"><big>9.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(9);return false;"><big>9.</big>
 Handle SHOOT GUN, SHOOT MAN, SHOOT AT MAN and SHOOT AT MAN WITH
 GUN.
 </a></p><div class="solution" id="a9">
@@ -521,7 +519,7 @@ me: Person
     }
 ;
 </pre>
-</div><p class="q"><a class="toggle" href="#" onclick="showSol(10);return false;"><big>10.</big> 
+</div><p class="q"><a class="toggle" href="#" onclick="showSol(10);return false;"><big>10.</big>
 An all-time personal favourite from the <i>Inform
 Designer's Manual IV</i>: Arrange for a bearded psychiatrist to place the
 player under observation, occasionally mumbling insights such as "Subject puts
@@ -535,10 +533,10 @@ green cone on table. Interesting."
 + HermitActorState
     <span class="c">/* This is the psychiatrist's initial state. */</span>
     isInitState = true
-    
+
     <span class="c">/* Shown in room descriptions when we're present. */</span>
     specialDesc = "A bearded psychiatrist has you under observation. "
-    
+
     <span class="c">/*
      *  So, what's with the <i>extraReport</i>s, you wonder?
      *  Well, if the text was simply displayed using
