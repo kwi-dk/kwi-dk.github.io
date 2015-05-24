@@ -1,0 +1,179 @@
+html {
+    background: #fff;
+    color: #000;
+    font: 10pt "Verdana", "Geneva", sans-serif;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    font-family: "Cambria", serif;  
+    font-size: 21pt;  
+    color: #17365D;
+    margin: 0;
+} 
+ 
+h2 {  
+    font-family: "Cambria", serif;  
+    color: #1F497D;
+
+    font-size: 1.4em;
+    margin: 1.5em 0 0.5em 0; 
+}
+
+h3 {
+    color: #000;
+    font-weight: bold;
+
+    font-size: 1em;
+    margin: 1.4em 0 0.2em 0;
+}
+
+#contents {
+    line-height: 1.4em;
+}
+
+p {
+    margin: 0 0 1.4em 0; 
+    color: #222;
+}
+
+ul {
+    margin: 0.3em 0 1.4em 0; 
+}
+
+blockquote {
+    margin: 1.4em; 
+}
+
+acronym {
+    border-bottom: 1px dotted #ccc;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    vertical-align: top;
+    padding: 0.1em 0.5em;
+}
+
+.vheads th {
+    text-align: left;
+    padding-left: 0;
+}
+
+a:link {
+    color: #006;
+}
+
+a:visited {
+    color: #606;
+}
+
+/* ------------------------------------------------------------------------- */
+/*
+ *  Page layout, breadcrumbs
+ */
+
+#head {
+    margin: 1em 30px 1em 30px;
+}
+
+.narrow {
+    max-width: 45em;
+}
+
+#contents {
+    margin: 30px;
+}
+
+#crumbs {
+    background: #eee url(topbar-eee-bar.png) center repeat-x;
+    font: 10pt "Trebuchet MS", "Helvetica", sans-serif;
+    margin: 1em 0;
+    height: 30px;
+}
+
+#crumbs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 0;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#crumbs li {
+    margin: 0;
+    display: inline-block;
+    height: 30px;
+    padding: 0 14px 0 0;
+}
+
+#crumbs li.eee-eee {
+    background: #eee url(topbar-eee-eee.png) center right no-repeat;
+}
+
+#crumbs li.eee-fff {
+    background: #eee url(topbar-eee-fff.png) center right no-repeat;
+}
+
+#crumbs li.fff-eee {
+    background: #fff url(topbar-fff-eee.png) center right no-repeat;
+}
+
+#crumbs li a, #crumbs li span {
+    display: block;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+
+    margin: 0;
+    padding: 0 4px 0 12px;
+
+    height: 28px;
+    line-height: 28px;
+}
+
+#crumbs a {
+    text-decoration: none;
+    color: #000;
+}
+#crumbs span {
+    font-weight: bold;
+}
+
+#crumbs li.first a, #crumbs li.first span {
+    padding-left: 30px;
+}
+
+/* ------------------------------------------------------------------------- */
+/*
+ *  Code
+ */
+
+.example {
+    overflow: auto;
+    border: 1px dashed #00c;
+    background: #f8f8f8;
+    padding: 1.4em;
+    margin: 1.4em 0;
+}
+
+code {
+    font-family: Consolas, monospace;
+}
+
+.win32 {
+    background: url(win32-icon.png) no-repeat left center;
+    padding-left: 24px;
+}
+
+.php {
+    background: url(php-icon.png) no-repeat left center;
+    padding-left: 38px;
+}
