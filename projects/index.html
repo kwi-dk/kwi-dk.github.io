@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>Projects</title>
+<link rel="stylesheet" type="text/css" href="/design/main.css" /></head>
+<body>
+<div id="head"><h1>Projects</h1></div><div id="crumbs">
+<ul>
+<li class="first eee-fff"><a href="/">kwi.dk</a></li><li class=" fff-eee"><span>Projects</span></li></ul>
+</div>
+<div id="contents" class="narrow"><h2 class="php" id="php-modules">PHP code</h2>
+<p><a href="https://bitbucket.org/kwi/kwi-php/">kwi-php</a> is a collection of PHP modules that I've been developing for a wide range of websites over the years. Unlike much of my code, these files have stabilized to the point where they can and have been reused between projects. The collection includes:</p><ul>
+<li><a href="https://bitbucket.org/kwi/kwi-php/src/tip/kwi2.php">kwi2.php</a> – utility functions (including a PDO database wrapper).</li>
+<li><a href="https://bitbucket.org/kwi/kwi-php/src/tip/KwiDatabase2.php">KwiDatabase2.php</a> – a newer version of the above kwi2 PDO database wrapper.</li>
+<li><a href="https://bitbucket.org/kwi/kwi-php/src/tip/KwiForm2.php">KwiForm2.php</a> – HTML form handling.</li>
+<li><a href="https://bitbucket.org/kwi/kwi-php/src/tip/KwiPage.php">KwiPage.php</a> – framework for page handling.</li>
+<li><a href="https://bitbucket.org/kwi/kwi-php/src/tip/KwiError.php">KwiError.php</a> – framework for error handling.</li>
+</ul><p>The modules are provided here in the hope that they will be useful, but with no warranty whatsoever.</p><p>By design, the modules place narrow constraints on the surrounding code: The code is written with the assumption that you're using PHP 5.2 or later (you knew that), UTF-8 as page encoding (you should be) and generate proper XHTML Strict code (why aren't you?).</p><p>Some other PHP tidbits are:</p><ul>
+<li><a href="/projects/php/source/example1.php?view">example1.php</a> – Example for KwiDatabase2, KwiForm2 and KwiPage.</li>
+<li><a href="/projects/php/truthtable/">Truth table</a> – calculates and displays truth tables from boolean expressions (rendered as HTML or LaTeX code).</li>
+<li><a href="/projects/php/UrlLinker/">UrlLinker.php</a> – a function to convert plaintext URLs into HTML links.</li>
+</ul><h3>MediaWiki projects</h3>
+<ul>
+<li><a href="/projects/mediawiki/KwikiData/">KwikiData</a> – An extension for extracting template data into an SQL database.</li>
+</ul><h2 class="win32" id="telmud">TelMUD</h2>
+<p>A simple but very nifty Telnet<a href="#telmud-note" onclick="document.getElementById('telmud-note').style.background='#ddd';return false;">*</a> client, made for connecting to MUDs and other "Telnet" servers that may display text while you're typing.</p>
+<p>Designed for ease-of-use, TelMUD requires no install. Simply download and run.</p>
+<table class="vheads">
+<tr><th>License:</th><td>Freeware (closed source).</td></tr>
+<tr><th>Support:</th><td>None; no longer under development.</td></tr>
+<tr><th>Quirks:</th><td>TelMUD doesn't display text from the server, until the server have sent a whole line. This means that e.g. a prompt won't show up until you enter a command. This should seldomly be a problem.</td></tr>
+<tr id="telmud-note"><th>Technical note:</th><td>It's not really a Telnet client, as it does not actually implement the <a href="http://en.wikipedia.org/wiki/TELNET">Telnet protocol</a>. However, it does what most people expects of a Telnet client, that is, allows you to send and receive text over a TCP connection. (Perhaps "TCP client" would be a better name for it?)</td></tr>
+<tr><th>Download:</th><td><a href="telmud/telmud.exe">Windows executable</a></td></tr>
+</table></div></body>
+</html>

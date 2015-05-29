@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>UrlLinker</title>
+<link rel="stylesheet" type="text/css" href="/design/main.css" /></head>
+<body>
+<div id="head"><h1>UrlLinker</h1></div><div id="crumbs">
+<ul>
+<li class="first eee-eee"><a href="/">kwi.dk</a></li><li class=" eee-eee"><a href="/projects/">Projects</a></li><li class=" eee-fff"><a href="/projects/php/">PHP code</a></li><li class=" fff-eee"><span>UrlLinker</span></li></ul>
+</div>
+<div id="contents" class="narrow"><p><b>UrlLinker</b> is a PHP module for converting plaintext to HTML, and any URLs in the text into HTML links.</p>
+<p>A <a href="http://stackoverflow.com/questions/1188129/replace-urls-in-text-with-html-links/">Stackoverflow.com question</a> prompted me to consider the difficulty of such a task. Initially, it seemed easy, but like an itch you just have to scratch, I kept coming back to it, to fix just one more little thing. I'm pretty happy about the final result.</p>
+<p><b>Source:</b> <a href="https://bitbucket.org/kwi/urllinker/src/tip/UrlLinker.php">UrlLinker.php</a> <a href="https://bitbucket.org/kwi/urllinker/raw/tip/UrlLinker.php">(download)</a></p>
+<p>Example of use:</p>
+<p class="example"><code><span style="color: #000000">
+<span style="color: #0000BB"></span><span style="color: #007700">print(</span><span style="color: #0000BB">htmlEscapeAndLinkUrls</span><span style="color: #007700">(</span><span style="color: #0000BB">$text</span><span style="color: #007700">));</span>
+</span>
+</code></p>
+<h2>Longer example</h2>
+<p><b>Source:</b> UrlLinker-example.php <a href="source/UrlLinker-example.php">(Download)</a></p><p class="example"><code><span style="color: #000000">
+&lt;!doctype&nbsp;html&gt;<br />&lt;html&gt;<br />&lt;head&gt;<br />&lt;title&gt;UrlLinker&nbsp;Example&lt;/title&gt;<br />&lt;/head&gt;<br />&lt;body&gt;<br />&lt;p&gt;<br /><span style="color: #0000BB">&lt;?php<br /><br /></span><span style="color: #007700">require(</span><span style="color: #DD0000">"UrlLinker.php"</span><span style="color: #007700">);<br /><br /></span><span style="color: #0000BB">$text&nbsp;</span><span style="color: #007700">=&nbsp;&lt;&lt;&lt;EOD<br /></span><span style="color: #DD0000">Here&nbsp;are&nbsp;some&nbsp;URLs:<br />stackoverflow.com/questions/1188129/pregreplace-to-detect-html-php<br />Here's&nbsp;the&nbsp;answer:&nbsp;http://www.google.com/search?rls=en&amp;q=42&amp;ie=utf-8&amp;oe=utf-8&amp;hl=en.&nbsp;What&nbsp;was&nbsp;the&nbsp;question?<br />A&nbsp;quick&nbsp;look&nbsp;at&nbsp;http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax&nbsp;is&nbsp;helpful.<br />There&nbsp;is&nbsp;no&nbsp;place&nbsp;like&nbsp;127.0.0.1!&nbsp;Except&nbsp;maybe&nbsp;http://news.bbc.co.uk/1/hi/england/surrey/8168892.stm?<br />Ports:&nbsp;192.168.0.1:8080,&nbsp;https://example.net:1234/.<br />Beware&nbsp;of&nbsp;Greeks&nbsp;bringing&nbsp;internationalized&nbsp;top-level&nbsp;domains:&nbsp;xn--hxajbheg2az3al.xn--jxalpdlp.<br />And&nbsp;remember.Nobody&nbsp;is&nbsp;perfect.<br /><br />&lt;script&gt;alert('Remember&nbsp;kids:&nbsp;Say&nbsp;no&nbsp;to&nbsp;XSS-attacks!&nbsp;Always&nbsp;HTML&nbsp;escape&nbsp;untrusted&nbsp;input!');&lt;/script&gt;<br /></span><span style="color: #007700">EOD;<br /><br />print(</span><span style="color: #0000BB">nl2br</span><span style="color: #007700">(</span><span style="color: #0000BB">htmlEscapeAndLinkUrls</span><span style="color: #007700">(</span><span style="color: #0000BB">$text</span><span style="color: #007700">)));<br /><br /></span><span style="color: #0000BB">?&gt;<br /></span>&lt;/p&gt;<br />&lt;/body&gt;<br />&lt;/html&gt;<br /></span>
+</code></p>
+<p><b>Output:</b></p>
+<p class="example">Here are some URLs:<br />
+<a href="http://stackoverflow.com/questions/1188129/pregreplace-to-detect-html-php">stackoverflow.com/questions/1188129/pregreplace-to-detect-html-php</a><br />
+Here's the answer: <a href="http://www.google.com/search?rls=en&amp;q=42&amp;ie=utf-8&amp;oe=utf-8&amp;hl=en">www.google.com/search</a>. What was the question?<br />
+A quick look at <a href="http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax">en.wikipedia.org/wiki/URI_scheme</a> is helpful.<br />
+There is no place like <a href="http://127.0.0.1">127.0.0.1</a>! Except maybe <a href="http://news.bbc.co.uk/1/hi/england/surrey/8168892.stm">news.bbc.co.uk/1/hi/england/surrey/8168892.stm</a>?<br />
+Ports: <a href="http://192.168.0.1:8080">192.168.0.1:8080</a>, <a href="https://example.net:1234/">example.net:1234/</a>.<br />
+Beware of Greeks bringing internationalized top-level domains: <a href="http://xn--hxajbheg2az3al.xn--jxalpdlp">xn--hxajbheg2az3al.xn--jxalpdlp</a>.<br />
+And remember.Nobody is perfect.<br />
+<br />
+&lt;script&gt;alert('Remember kids: Say no to XSS-attacks! Always HTML escape untrusted input!');&lt;/script&gt;</p>
+<h2>License</h2>
+<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+<a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/" style="text-decoration:none; display: block; width: 88px; height: 31px; float: left; margin: 0.2em 0.8em 0 0;">
+<img src="/licenses/cc0.png" alt="CC0" style="border: none" />
+</a>
+To the extent possible under law, <a href="http://www.kwi.dk/about/" rel="dct:publisher"><span property="dct:title">Søren Løvborg</span></a>
+has waived all copyright and related or neighboring rights to <a href="/projects/php/UrlLinker/"><span property="dct:title">UrlLinker</span></a>.
+</p>
+</div></body>
+</html>

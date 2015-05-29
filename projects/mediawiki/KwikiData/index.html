@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<title>KwikiData extension for MediaWiki</title>
+<link rel="stylesheet" type="text/css" href="/design/main.css" /></head>
+<body>
+<div id="head"><h1>KwikiData extension for MediaWiki</h1></div><div id="crumbs">
+<ul>
+<li class="first eee-eee"><a href="/">kwi.dk</a></li><li class=" eee-eee"><a href="/projects/">Projects</a></li><li class=" eee-fff"><a href="/projects/mediawiki/">MediaWiki</a></li><li class=" fff-eee"><span>KwikiData</span></li></ul>
+</div>
+<div id="contents" class="narrow"><p><b>KwikiData</b> is a <a href="http://www.mediawiki.org/wiki/MediaWiki">MediaWiki</a> extension that extracts template data and stores them in an SQL database.
+The database becomes a <i>live</i>, <i>read-only</i> mirror of the structured information in the wiki.</p>
+<p><b>Source:</b> Can be found on <a href="https://bitbucket.org/kwi/kwikidata/src">BitBucket</a> <a href="https://bitbucket.org/kwi/kwikidata/get/tip.zip">(download)</a></p>
+<p>KwikiData depends on the light-weight KwiDatabase2 database abstraction layer.</p>
+<p><b>Source:</b> <a href="https://bitbucket.org/kwi/kwi-php/src/tip/KwiDatabase2.php">KwiDatabase2.php</a> <a href="https://bitbucket.org/kwi/kwi-php/raw/tip/KwiDatabase2.php">(download)</a></p>
+<p><a href="http://www.mediawiki.org/wiki/Extension:KwikiData">MediaWiki.org page for the extension</a></p>
+<h2>Background</h2>
+<p>At <a href="http://www.studerende.dk/">Student Business Relations</a>, we've been experimenting with storing contact information on the user pages of our MediaWiki installation. For this purpose, we use a template, like this:</p>
+<pre class="example"><code>{{User
+| name = Søren Løvborg
+| messenger = soren_lovborg@passport.com
+}}</code></pre>
+<p>We already present this information in an organized way on the wiki itself using the <a href="http://www.mediawiki.org/wiki/Extension:DynamicPageList_(third-party)">DynamicPageList2</a> extension, but had no way to extract the information for use outside the wiki.</p>
+<p>Enter the KwikiData extension, which automatically replicates template information into a separate MySQL database.</p>
+<h2>How it works</h2>
+<p>First, you must create a separate schema (in MySQL also known as a database) for the extracted wiki data. Example:</p>
+<pre class="example"><code>CREATE SCHEMA `wikidata`;</code></pre>
+<p>Then you create one table for each template you're interested in (e.g. "User"). The tables should consist of one column for each template parameter you're interested in, plus a column to store the page title (the primary key). Example:</p>
+<pre class="example"><code>CREATE TABLE `wikidata`.`User` (
+  `_page` varchar(255) NOT NULL,
+  `_timestamp` int NOT NULL,
+  `name` varchar(255),
+  `messenger` varchar(255),
+  `phone` varchar(255),
+  PRIMARY KEY (`_page`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8</code></pre>
+<p>The template parameter columns must allow <code>NULL</code> values.</p>
+<p>Now you just need to configure your MediaWiki installation to use KwikiData, and you'll have a populated "User" table in no time.</p>
+<p>The database is automatically updated when saving an article, but "sysop" users can also request a complete update by adding <tt>?action=updateAllKwikiData</tt> to any wiki URL.</p>
+<h2>Configuration</h2>
+<p>Start by adding the following two lines to your <tt>LocalSettings.php</tt>:</p>
+<p class="example"><code><span style="color: #000000">
+<span style="color: #0000BB">$wgAutoloadClasses</span><span style="color: #007700">[</span><span style="color: #DD0000">'KwiDatabase2'</span><span style="color: #007700">]&nbsp;=&nbsp;</span><span style="color: #DD0000">"</span><span style="color: #0000BB">$IP</span><span style="color: #DD0000">/extensions/KwiDatabase2.php"</span><span style="color: #007700">;<br />require_once(&nbsp;</span><span style="color: #DD0000">"</span><span style="color: #0000BB">$IP</span><span style="color: #DD0000">/extensions/KwikiData.setup.php"&nbsp;</span><span style="color: #007700">);</span>
+</span>
+</code></p>
+<p>You may additionally set a number of variables to configure KwikiData. These must be set <i>after</i> <code>require_once</code>, and their default values can be found at the end of <code>KwikiData.setup.php</code>.</p>
+<h3>Database options</h3>
+<p>KwikiData needs a database connection to store template data, and is currently unable to re-use the MediaWiki connection.
+Instead, it needs a KwiDatabase2 database connection.
+(I'm unsure if it's even possible to use the MediaWiki connection, due to the highly specialized nature of the MediaWiki database abstraction layer, and the fact that we're accessing data in another schema.)</p>
+<p>You may set <code>$wgKwikiDataDSN</code> to a specific PDO (<a href="http://www.php.net/manual/en/book.pdo.php">PHP Data Objects)</a>) DSN (Data Source Name, AKA connection string).
+If you don't, KwikiData automatically tries to connect to the same database server that the rest of the MediaWiki installation uses.</p>
+<p>The database user name and password is set using <code>$wgKwikiDataUser</code> and <code>$wgKwikiDataPassword</code>; these default to the same credentials as used for the main MediaWiki database.</p>
+<p>By default, data is stored in the schema (AKA database) "wikidata", but this can be overriden using <code>$wgKwikiDataSchema</code>.
+If using a non-MySQL database server, you may also need to set <code>$wgKwikiDataCatalog</code>; this has not been tested, so caveat emptor.</p>
+<h2>Support</h2>
+<p>Send questions, complaints, praise, bug reports and patches to <a href="/about/">the author</a>.</p>
+<p>By sending patches to the author, you agree to license them under the same terms as KwikiData itself ("GNU GPL 2 or later").</p>
+<h3>Other database engines than MySQL</h3>
+<p>KwikiData has only been tested agains MySQL, though some preliminary support for other database backends has been added. Bug reports and patches are welcome.</p>
+<h2>License</h2>
+<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+<a rel="license" href="http://creativecommons.org/licenses/GPL/2.0/" style="text-decoration:none; display: block; width: 88px; height: 31px; float: left; margin: 0.2em 0.8em 0 0;">
+<img alt="CC-GNU GPL" style="border: none" src="/licenses/cc-gpl.png" /></a>
+This software is licensed under the <a href="http://creativecommons.org/licenses/GPL/2.0/">GNU GPL version 2.0</a> and any later version.
+</p>
+</div></body>
+</html>
