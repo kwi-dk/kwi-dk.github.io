@@ -24,12 +24,12 @@ Read more about Airlink</a>
 <table>
 <tr><td>When:          </td><td>2012–2015</td></tr>
 <tr><td>Contribution:  </td><td>Spearheaded development of an automated testing solution</td></tr>
-<tr><td>Technologies:  </td><td>Python, Linux, SSH, <a href="http://www.read.cs.ucla.edu/click/">Click</a></td></tr>
+<tr><td>Technologies:  </td><td>Python, C++, Linux, Paramiko, <a href="http://www.read.cs.ucla.edu/click/">Click</a>, PXE</td></tr>
 </table>
-<p>Siemens Airlink provides secure and reliable wireless connectivity between railway rolling stock and wayside equipment. Airlink is used as a communication platform by light rail and metropolitan train systems worldwide, carrying millions of passengers every day.</p>
+
+<p>Siemens Airlink provides secure and reliable wireless connectivity between railway rolling stock and wayside equipment. Used worldwide by light rail and metropolitan railways, Airlink carries millions of passengers daily.</p>
 <p>When I joined the Airlink software department, the job was characterized by month long test sprints, interrupted only by brief periods of development. In an effort to change this unsustainable test/development balance, I spearheaded the development of a fully automated test solution.</p>
-<p>Utilizing a custom software-defined networking solution based on Click, the system allows on-the-fly reconfiguration of test setups and dynamic allocation of physical and virtual hardware to a given test run.</p>
-<p>The test framework enables automatic test cases to be written in Python, accessing and querying units under test through a compact, high-level notation. The framework also provided automatic parameterization of test cases, allowing fine-grained targeting or restriction of tests. Using Python's introspection features, comments can also be automatically extracted to create textual descriptions of test cases for review by the product owner.</p>
+<p>Utilizing a proprietary software-defined networking solution based on Click, the system allows on-the-fly reconfiguration of test setups and dynamic allocation of physical and virtual hardware to a given test run. The Python-based test framework enables automatic test cases to query and manipulate units under test through a compact, high-level notation. Through introspection, program structure and code comments are automatically extracted to create textual descriptions of test cases for review by the product owner.</p>
 
 <h2>Continuous integration system for Siemens Airlink</h2>
 <div class="inmargin">
@@ -40,14 +40,15 @@ Read more about Airlink</a>
 <tr><td>Contribution:  </td><td>Design and implementation of a continuous integration system</td></tr>
 <tr><td>Technologies:  </td><td>Git, GitLab, Buildbot, Python, Linux</td></tr>
 </table>
-<p>In 2014, the Airlink team started a continuous integration project, aiming
+
+<p>The Airlink continuous integration project aimed
 to achieve improved developer output through better tooling and a reduction in
 build errors and down time.</p>
-<p>Thus began a slow, at times painful, but also much-overdue transition from a
+<p>The project included a much-overdue transition from a
 legacy nightly build system (based on Subversion plus endless amounts of ad-hoc
-shell scripts), towards a comprehensive continuous integration system (based on
+shell scripts) towards a comprehensive continuous integration system (based on
 Git, GitLab and Buildbot).</p>
-<p>Together with a coworker, I oversaw the transition to Git including rollout
+<p>With a coworker, I oversaw the transition to Git including rollout
 of the new infrastructure, the authoring of team guidelines and documentation,
 and the design and implementation of the new CI workflow.</p>
 
@@ -62,6 +63,7 @@ and the design and implementation of the new CI workflow.</p>
 </table>
 <p>In 2009 I was tasked with completing the customer-facing sales site for DSE, when an external contractor failed to meet a critical deadline. The initial prototype was written (in PHP), tested and deployed over the course of a weekend, just in time for the DSE 2009 opening sale in which 26 companies placed orders amounting to DKK 1,059,500 during the first three hours. It worked flawlessly throughout the financial year.</p>
 <p>In 2011 I rebuilt the system from scratch, this time in Python, improving the software design and adding a multitude of features, including a much requested "cinema seat-selector" style system for booking stands for the DSE Fair.</p>
+
 <h2>usedbooks.dk</h2>
 <div class="inmargin">
 <a href="http://usedbooks.dk"><img src="usedbooks.png" alt="usedbooks.dk" /></a>
@@ -77,6 +79,7 @@ and single-handedly rewrote the website codebase to enhance usability, functiona
 <p>Usedbooks.dk interfaces with <a href="http://www.polyteknisk.dk">Polyteknisk Boghandel</a> and Amazon.com
 (through the <a href="https://affiliate-program.amazon.com/gp/advertising/api/detail/main.html">Amazon Product Advertising API</a>)
 to retrieve book details, covers and prices (for comparison with the usedbooks.dk prices).</p>
+
 <h2>Infrastructure supervisor at DSE Fair Lyngby 2009–2013</h2>
 <div class="inmargin">
 <img src="netv%c3%a6rksgrej.jpg" alt="DSE wiki" />
@@ -84,13 +87,12 @@ to retrieve book details, covers and prices (for comparison with the usedbooks.d
 <table>
 <tr><td>When:          </td><td>April 2009, March 2010, April 2011, March 2012, March 2013</td></tr>
 <tr><td>Contribution:  </td><td>GUI and server development, network and power planning/deployment</td></tr>
-<tr><td>Technologies:  </td><td>Ubuntu Linux, PHP, MySQL</td></tr>
+<tr><td>Technologies:  </td><td>VMware ESXi, Ubuntu Linux, PHP, Python, MySQL, SVG, XSLT, MediaWiki, Mercurial</td></tr>
 </table>
-<p>Organized by the volunteer-run <a href="http://www.studerende.dk/">Students Business Relations</a> (De Studerendes Erhvervskontakt, DSE), DSE Fair Lyngby is the largest job fair in Denmark.</p>
-<p>I was ultimately responsible for all electricity, network and radio communications during the 2009 DSE Fair Lyngby,
-which saw more than 150 participating companies and organizations and more than 7.000 visitors, a role I reprised the following four years.</p>
-<p>In addition to custom development work for the many IT services at the fair, I worked with fellow DSE volunteers and external partners
-(DTU IT Service and DTU Campus Service) to achieve a smooth experience for both exhibitors and visitors at the fair.</p>
+
+<p>For five years, I was responsible for all electricity, network and radio infrastructure at DSE Fair Lyngby, the largest job fair in Denmark with more than 150 participating companies and organizations and more than 10.000 visitors.</p>
+<p>As supervisor, I worked closely with customers, fellow DSE volunteers and external partners to achieve a smooth experience for both exhibitors and visitors. In addition, I developed everything from custom tools to keep fairground maps and fire safety, network and power plans coherent and up-to-date, to software for self-service kiosks and information displays.</p>
+
 <h2>MiniUML extensible diagram editor</h2>
 <div class="inmargin">
 <a href="http://miniuml.codeplex.com/" title="MiniUML"><img src="miniuml.jpg" alt="MiniUML" /></a>
