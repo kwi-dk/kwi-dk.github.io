@@ -30,6 +30,25 @@ Read more about Airlink</a>
 <p>When I joined the Airlink software department, the job was characterized by month long test sprints, interrupted only by brief periods of development. In an effort to change this unsustainable test/development balance, I spearheaded the development of a fully automated test solution.</p>
 <p>Utilizing a custom software-defined networking solution based on Click, the system allows on-the-fly reconfiguration of test setups and dynamic allocation of physical and virtual hardware to a given test run.</p>
 <p>The test framework enables automatic test cases to be written in Python, accessing and querying units under test through a compact, high-level notation. The framework also provided automatic parameterization of test cases, allowing fine-grained targeting or restriction of tests. Using Python's introspection features, comments can also be automatically extracted to create textual descriptions of test cases for review by the product owner.</p>
+
+<h2>Continuous integration system for Siemens Airlink</h2>
+<div class="inmargin">
+<a href="ci-workflow.pdf"><img src="ci-thumb.png" alt="Continuous integration workflow" /></a>
+</div>
+<table>
+<tr><td>When:          </td><td>2014–2015</td></tr>
+<tr><td>Contribution:  </td><td>Design and implementation of a continuous integration system</td></tr>
+<tr><td>Technologies:  </td><td>Git, GitLab, Buildbot, Python, Linux</td></tr>
+</table>
+<p>In 2014, the Airlink team started a continuous integration project, aiming
+to achieve improved developer output through better tooling and a reduction in
+build errors and down time.</p>
+<p>Thus began a slow, at times painful, but also much-overdue transition from a
+legacy nightly build system (based on Subversion plus endless amounts of ad-hoc
+shell scripts), towards a comprehensive continuous integration system (based on
+Git, GitLab and Buildbot).</p>
+<p>I designed and implemented much of the new version control workflow.</p>
+
 <h2>DSE sales site</h2>
 <div class="inmargin">
 <img src="dsesales.png" alt="DSE sales site" />
