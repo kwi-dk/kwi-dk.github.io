@@ -1,0 +1,325 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf8" />
+<title>Portfolio – Søren Løvborg</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="openid.server" href="http://kwi.dk/openid/" />
+<link rel="openid.delegate" href="http://kwi.dk/openid/" />
+<style>
+html, body {
+    background: #283d53 url(portfolio/stripe-1.png) center/100px;
+    font: 16px/20px Helvetica, sans-serif;
+    margin: 0;
+    min-width: 350px;
+    padding: 0;
+}
+
+h1 {
+    margin: 44px 0 20px 0;
+    font-size: 30px;
+    font-weight: normal;
+    line-height: 36px;
+}
+
+h2 {
+    line-height: 24px;
+    font-weight: normal;
+    margin: 36px 0 20px 0;
+}
+
+p {
+    margin: 20px 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+@media (any-hover: none) {
+    abbr {
+        text-decoration: none;
+    }
+}
+
+.splash {
+    background-size: cover !important;
+    border-bottom: 1px solid #364a66;
+    height: 60px;
+    overflow: hidden;
+    position: relative;
+    visibility: hidden;
+}
+@media screen {
+    .splash {
+        box-shadow: inset 0px 0px 20px 5px rgba(0, 0, 0, 0.5);
+        height: 700px;
+        visibility: visible;
+        margin: -180px 0;
+    }
+}
+@media screen and (max-width: 1000px) {
+    .splash {
+        height: 500px;
+        margin: -100px 0;
+    }
+}
+.splash span {
+    color: rgba(255, 255, 255, 0.75);
+    font: 12px Helvetica, sans-serif;
+    position: absolute;
+    right: 16px;
+    bottom: 4px;
+    transform-origin: top right;
+    transform: rotate(-90deg);
+    width: 0;
+    height: 0;
+    white-space: nowrap;
+}
+@media screen and (max-width: 865px) {
+    .splash span {
+        bottom: 75px;
+    }
+}
+
+.frame:first-child {
+    margin-top: 0;
+}
+
+.frame {
+    background: #fff;
+    border-radius: 3px;
+    border: 1px solid #eee;
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.25);
+    margin: 30px auto 30px auto;
+    max-width: 820px;
+    position: relative;
+    z-index: 100;
+}
+
+section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -60px;
+}
+section > p {
+    margin: 0 0 20px 60px;
+}
+
+article {
+    padding: 0 0 16px 125px;
+    overflow: hidden; /* needed for child margins */
+}
+article > * {
+    margin-right: 180px;
+}
+
+article > img:first-child {
+    float: right;
+}
+
+article > h2 > span:first-child,
+article > p > span:first-child {
+    display: block;
+    position: absolute;
+    margin-left: -100px;
+    width: 85px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+article > h2 > span:first-child {
+    padding-top: 4px;
+    line-height: 20px;
+}
+
+ul.leaflets {
+    clear: right;
+    float: right;
+    font-size: 90%;
+    list-style: none;
+    margin: 0 40px 20px 20px;
+    padding: 0;
+}
+
+.leaflets li, .leaflets a, .leaflets img {
+    display: block;
+    text-align: center;
+    width: 102px;
+}
+
+.leaflets img {
+    border: 1px solid;
+    width: 100px;
+    height: 141px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+    margin: 0 0 9px 0;
+}
+
+@media screen and (max-width: 780px) {
+    article > * {
+        margin-right: 130px;
+    }
+    ul.leaflets {
+        width: 52px !important;
+        font-size: 12px !important;
+    }
+    .leaflets li, .leaflets a {
+        width: 52px !important;
+    }
+    .leaflets img {
+        width: 50px !important;
+        height: 70px !important;
+    }
+}
+
+@media screen and (max-width: 720px) {
+    h1 {
+        margin-top: 24px;
+    }
+    ul {
+        padding-left: 20px;
+    }
+    article {
+        padding: 0 20px 16px 20px;
+    }
+    article > img:first-child {
+        display: block;
+        float: none;
+        margin: 30px auto !important;
+    }
+    article > * {
+        margin-right: 70px;
+    }
+    article > * > span:first-child {
+        position: relative !important;
+        margin: 0 !important;
+        text-align: left !important;
+        color: #666;
+    }
+    ul.leaflets {
+        margin-right: 0px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+<div class="frame"><article>
+<h1>Søren Løvborg</h1>
+<section>
+<p>Software Engineer<br />
+<abbr title="Master of Science in Engineering">M.Sc.Eng.</abbr> in Computer Science</p>
+<p>E-mail: <a href="mailto:kwi@kwi.dk">kwi@kwi.dk</a><br />
+Phone:  <a href="tel:+4520936001">+45 2093 6001</a></p>
+</section>
+<p>Software developer with a solid knowledge of application and backend design and development, and a decade of Linux devops experience.</p>
+<p>I am detail-oriented, but also a firm believer in a holistic approach to software development, and always striving to understand adjacent systems and the wider needs of stakeholders.
+I am comfortable with JavaScript as well as assembly code, but given the choice, I'll probably pick either Python for agility or Rust for correctness and performance.</p>
+<h2>Portfolio</h2>
+<ul class="leaflets">
+<li><a href="https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg"><img src="portfolio/stackoverflow-thumb.png" alt="Stack Overflow profile" title="Stack Overflow profile" /></a></li>
+</ul>
+<p>I have spent most of my career working on proprietary and bespoke software solutions, which limits what I can share here.</p>
+<p>Where possible, I have included document excerpts and links to public work, as exemplified here with <a href="https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg">my profile on Stack Overflow</a>, where I am a moderately active (top 5%) contributor.</p>
+</article></div>
+<div class="splash" style="background: #487886 url(portfolio/unity-sample-game-splash.jpg) 5% 90%"><span>Image: Unity Technologies</span></div>
+<div class="frame"><article>
+<img src="portfolio/unity-logo.png" alt="" style="width: 150px; height: 52px; margin: 25px;" />
+<h2><span>2015–</span> Unity Technologies</h2>
+<p>The Unity engine powered more than half of all video games released in 2020, and combined with an abundance of related services and technologies, Unity is the world's leading platform for interactive, real-time 3D content.</p>
+<p>I joined Unity in a period of rapid growth, and as a result I've had a multitude of responsibilities, ranging from direct contributions to the Unity engine C# and C++ codebase, to building a lot of the tooling and infrastructure underpinning the Unity engine and its developers.</p>
+<p><span>2021–</span> Unity Package Manager internal tools and services.</p>
+<p><span>2020</span> Unity &quot;A2&quot; Sample Game internal tools and services.</p>
+<p><span>2017–2020</span> Architect and lead developer of the Stevedore binary artifact manager used internally by Unity engine developers, and externally by source code customers and early adopters of Unity's DOTS ecosystem.</p>
+<ul>
+<li>Designing, building (and thoroughly documenting) the new Stevedore infrastructure for worldwide distribution of often large binary artifacts, in a manner that remains efficient and reliable in face of shaky network connections, while preserving both the confidentiality of artifacts (where under <abbr title="non-disclosure agreement">NDA</abbr>) and the data privacy of Stevedore users (under the GDPR).</li>
+</ul>
+<ul class="leaflets">
+<li><a href="https://github.com/Unity-Technologies/p7zip-zstd/pull/1"><img src="portfolio/p7zip-pullrequest-thumb.png" alt="compliance work example" title="compliance work example" /></a></li>
+</ul>
+<ul>
+<li>
+<p>Integrating with the Unity build system for on-demand downloading of build dependencies, using nested OAuth flows to bridge our build process with Unity's single sign-on provider.</p>
+</li>
+<li>
+<p>Developing guidelines for open source license compliance, including GPL license compliance.</p>
+</li>
+</ul>
+<p><span>2019</span> Unity editor <abbr title="Remote Code Execution">RCE</abbr> vulnerability (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-9197">CVE-2019-9197</a>) analysis and patch security review.</p>
+<p><span>2018</span> <a href="https://blog.unity.com/technology/releasing-the-unity-c-source-code">Unity C# source code release</a>. Worked with a colleague to find and implement a way to release a useful version of the Unity C# source code while satisfying legal obligations and business needs.</p>
+<p><span>2016–2018</span> R&amp;D onboarding: Introducing all newly hired R&amp;D developers to the Unity engine development processes and tools.</p>
+<p><span>2015–2017</span> Responsible for the Unity source code product infrastructure, working with legal and sales to streamline processes, ensure license compliance, and to iterate on product offerings.</p>
+<p><span>2015–2016</span> Technical release manager: Shepherding R&amp;D developers and their code through the Unity engine development processes. Contributing to our internal Mercurial version control service (a highly customized <a href="https://kallithea-scm.org/">Kallithea</a> installation).</p>
+</article></div>
+<div class="splash" style="background: #55789e url(portfolio/s-tog-i-regnvejr-nicolai-perjesi-dsb.jpg) 70% 40%;"><span>Photo: Nicolai Perjesi / DSB</span></div>
+<div class="frame"><article>
+<img src="portfolio/Siemens_AG_logo.svg" alt="" style="width: 200px; height: 32px; margin: 32px;" />
+<h2><span>2010–2015</span> Siemens</h2>
+<p>Siemens is one of the largest industrial manufacturing companies in the world.</p>
+<p><span>2012–2015</span> <strong>Siemens Airlink</strong><br />
+The Airlink communications platform powers railways worldwide, including the Copenhagen metropolitan S-train network.</p>
+<ul class="leaflets">
+<li><a href="portfolio/2014W38-excerpt.pdf"><img src="portfolio/2014W38-excerpt-thumb.png" alt="Excerpt from sprint review presentation" title="Excerpt from sprint review presentation" /></a></li>
+<li><a href="portfolio/airlink-system.pdf"><img src="portfolio/airlink-system-thumb.png" alt="Airlink test setup example" title="Airlink test setup example" /></a></li>
+<li><a href="https://github.com/kohler/click/pull/166"><img src="portfolio/click-pullrequest-thumb.png" alt="Click open source contribution" title="Click open source contribution" /></a></li>
+<li><a href="https://github.com/kohler/click/pulls?q=is%3Apr+is%3Aclosed+author%3Akwi-dk">(more PRs)</a></li>
+</ul>
+<p><span>2012–2015</span> Test and tools development lead; spearheaded comprehensive test automation project.</p>
+<p>When I joined the Airlink software department, the job was characterized by month long test sprints, interrupted only by brief periods of development. In an effort to change this unsustainable test/development balance, I spearheaded the development of a fully automated test solution, comprised of the following elements:</p>
+<ul>
+<li>
+<p>A custom software-defined networking solution based on <a href="https://github.com/kohler/click/">Click</a> bridging physical and virtual hardware, and emulating the complex network setups found in production Airlink systems.</p>
+</li>
+<li>
+<p>Dynamic allocation and orchestration of physical hardware units, allowing on-the-fly reconfiguration of test setups.</p>
+</li>
+<li>
+<p>A Python-based test framework exposing a high-level API enabling test scripts to query and manipulate units under test through a compact, high-level notation.</p>
+</li>
+<li>
+<p>Test script structure and code comments automatically extracted to create textual descriptions of test cases for comparison with test specifications and later review by the product owner.</p>
+</li>
+</ul>
+<p><span>2015</span> Scrum Alliance Certified ScrumMaster.</p>
+<ul class="leaflets">
+<li><a href="portfolio/ci-workflow.pdf"><img src="portfolio/ci-workflow-thumb.png" alt="Git CI process diagram" title="Git CI process diagram" /></a></li>
+</ul>
+<p><span>2014</span> Coauthored new Git-based continuous integration process, including the transitioning of the Airlink source code away from a monolithic Subversion repository and into many separate and smaller Git repositories.</p>
+<p><span>2014</span> On-site Airlink engineer during full-system S-train test runs.</p>
+<p><span>2010–2012</span> <strong>Siemens Mobility Software</strong></p>
+<p><span>2011</span> Received security clearance to work on the &quot;Passport 1.1&quot; project to introduce biometrics in Danish passports (for the Danish National Police).</p>
+<p><span>2011</span> Great Belt Fixed Link <abbr title="Automatic number-plate recognition">ANPR</abbr> project tender offer (for A/S Storebælt).</p>
+<p><span>2010–2011</span> Mercurial version control system rollout (including documentation, processes, training materials).</p>
+<p><span>2010–2012</span> PDS 2.0 compressor efficiency modeling (for Siemens Turbomachinery Equipment).</p>
+</article></div>
+<div class="splash" style="background: #c25435 url(portfolio/dsemesse.jpg) 50% 50%;"><span>Photo: DSE</span></div>
+<div class="frame"><article>
+<img src="portfolio/dse-logo.png" alt="" style="width: 150px; height: 59px; margin: 30px;"/>
+<h2><span>2008–2014</span> Students Business Relations (DSE)</h2>
+<p>DSE is a non-profit dedicated to organizing events connecting engineers and engineering students with businesses big and small. With more than 10,000 attendees and 150 exhibiting businesses, the yearly DSE Fair Lyngby is the largest job fair in Denmark.</p>
+<p>In my time with DSE, I led the implementation of a new intranet solution (a heavily customized internal <a href="https://www.mediawiki.org/wiki/MediaWiki">MediaWiki</a> installation) for knowledge sharing, project management and <abbr title="Customer relationship management">CRM</abbr>, as well as the customer-facing sales site that is still in use as of 2021.</p>
+<ul class="leaflets">
+<li><a href="portfolio/dml13-hallen.pdf"><img src="portfolio/dml13-hallen-thumb.png" alt="2013 Hall area source plan" title="2013 Hall area source plan" /></a></li>
+</ul>
+<p><span>2009–2013</span> Infrastructure supervisor at DSE Fair Lyngby.</p>
+<p>For five years, I was responsible for all electricity, network and radio infrastructure at the largest job fair in Denmark. As supervisor, I worked closely with customers, fellow DSE members and external partners to achieve a smooth experience for both exhibitors and visitors. In addition, I developed everything from custom tools to keep fairground maps and fire safety, network and power plans coherent and up-to-date, to software for self-service kiosks and information displays.</p>
+<!-- <div class="layeranim"><img src="hal-krita-0.png" alt="" /><img src="hal-krita-1.png" alt="" /><img src="hal-krita-3.png" alt="" /><img src="hal-krita-2.png" alt="" /></div>-->
+<p><span>2010–2011</span> Member of the DSE board of directors.</p>
+</article></div>
+<div class="frame"><article>
+<img src="portfolio/dtu-logo-red.png" alt="" style="width: 70px; height: 102px; margin: 35px;" />
+<h2>Technical University of Denmark</h2>
+<p><span>2012</span> Master of Science in Engineering in Computer Science<br />
+Master's thesis: A configuration system for Siemens Airlink</p>
+<p><span>2009–2012</span> Teacher, &quot;Hands-on Microcontroller Programming&quot; course (full-time teaching position, two months per year).</p>
+<p>A laboratory course on embedded development, with a focus on &quot;smart grid&quot; applications. Worked with students throughout the course, helped prepare test setups, and produced supplementary course materials.</p>
+<p><span>2008</span> usedbooks.dk relaunch.</p>
+<p>usedbooks.dk (2003–2016) was a free online marketplace for used textbooks, aimed at DTU students. For its 2008 relaunch under the auspices of the DTU Software and Mathematics council, I reimplemented the entire site essentially from scratch (while preserving all user data) in order to simplify backend maintenance, as well as adding convenience features like automatic book covers and price comparisons with other bookstores.</p>
+
+</article></div>
+</body>
+</html>
