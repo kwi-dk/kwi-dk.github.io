@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<meta charset="utf8" />
+<meta charset="utf-8" />
 <title>Resume – Søren Løvborg</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="openid.server" href="http://kwi.dk/openid/" />
@@ -13,6 +13,7 @@ html, body {
     margin: 0;
     min-width: 350px;
     padding: 0;
+    overscroll-behavior-x: none;
 }
 
 h1 {
@@ -211,7 +212,8 @@ ul.leaflets {
 <div class="frame"><article>
 <h1>Søren Løvborg</h1>
 <section>
-<p>Software Engineer<br />
+<p>He/him<br />
+Software Engineer<br />
 <abbr title="Master of Science in Engineering">M.Sc.Eng.</abbr> in Computer Science</p>
 <p>E-mail: <a href="mailto:kwi@kwi.dk">kwi@kwi.dk</a><br />
 Phone:  <a href="tel:+4520936001">+45 2093 6001</a><br />
@@ -221,12 +223,6 @@ Social: <a rel="me" href="https://mastodon.online/@kwi">@kwi@mastodon.online</a>
 <p>Software developer with a solid knowledge of application and backend design and development, and a decade of Linux devops experience.</p>
 <p>I am detail-oriented, but also a firm believer in a holistic approach to software development, and always striving to understand adjacent systems and the wider needs of stakeholders.
 I am comfortable with JavaScript as well as assembly code, but given the choice, I'll probably pick either Python for agility or Rust for correctness and performance.</p>
-<h2>Resume</h2>
-<ul class="leaflets">
-<li><a href="https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg"><img src="portfolio/stackoverflow-thumb.png" alt="Stack Overflow profile" title="Stack Overflow profile" /></a></li>
-</ul>
-<p>I have spent most of my career working on proprietary and bespoke software solutions, which limits what I can share here.</p>
-<p>Where possible, I have included document excerpts and links to public work, as exemplified here with <a href="https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg">my profile on Stack Overflow</a>, where I am a moderately active (top 5%) contributor.</p>
 </article></div>
 <div class="splash" style="background: #487886 url(portfolio/unity-sample-game-splash.jpg) 5% 90%"><span>Image: Unity Technologies</span></div>
 <div class="frame"><article>
@@ -235,7 +231,11 @@ I am comfortable with JavaScript as well as assembly code, but given the choice,
 <p>The Unity engine powered more than half of all video games released in 2020, and combined with an abundance of related services and technologies, Unity is the world's leading platform for interactive, real-time 3D content.</p>
 <p>I joined Unity in a period of rapid growth, and as a result I've had a multitude of responsibilities, ranging from direct contributions to the Unity engine C# and C++ codebase, to building a lot of the tooling and infrastructure underpinning the Unity engine and its developers.</p>
 <p><span>2021–</span> Unity Package Manager internal tools and services.</p>
-<p><span>2020</span> Unity &quot;A2&quot; Sample Game internal tools and services.</p>
+<ul>
+<li><p>Architected and prototyped a major overhaul of Unity's internal package verification and promotion pipeline (both tooling and infrastructure), eliminating years of accumulated technical debt and empowering the Unity engine developers to efficiently ship Unity packages in compliance with internal standards.</p></li>
+<li><p>Championed new team processes for work planning and evidence-based estimates, inspired by Scrum but simplified and adapted to the practical realities of the team and its place in the larger Unity organization.</p></li>
+</ul>
+<p><span>2020</span> Unity "A2" Sample Game internal tools and services.</p>
 <p><span>2017–2020</span> Architect and lead developer of the Stevedore binary artifact manager used internally by Unity engine developers, and externally by source code customers and early adopters of Unity's DOTS ecosystem.</p>
 <ul>
 <li>Designing, building (and thoroughly documenting) the new Stevedore infrastructure for worldwide distribution of often large binary artifacts, in a manner that remains efficient and reliable in face of shaky network connections, while preserving both the confidentiality of artifacts (where under <abbr title="non-disclosure agreement">NDA</abbr>) and the data privacy of Stevedore users (under the GDPR).</li>
@@ -252,9 +252,9 @@ I am comfortable with JavaScript as well as assembly code, but given the choice,
 </li>
 </ul>
 <p><span>2019</span> Unity editor <abbr title="Remote Code Execution">RCE</abbr> vulnerability (<a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-9197">CVE-2019-9197</a>) analysis and patch security review.</p>
-<p><span>2018</span> <a href="https://blog.unity.com/technology/releasing-the-unity-c-source-code">Unity C# source code release</a>. Worked with a colleague to find and implement a way to release a useful version of the Unity C# source code while satisfying legal obligations and business needs.</p>
+<p><span>2018</span> <a href="https://blog.unity.com/technology/releasing-the-unity-c-source-code">Unity C# source code release</a>. Worked with a colleague to find and implement a way to release a useful version of the Unity C# source code on GitHub while satisfying legal obligations and business needs.</p>
 <p><span>2016–2018</span> R&amp;D onboarding: Introducing all newly hired R&amp;D developers to the Unity engine development processes and tools.</p>
-<p><span>2015–2017</span> Responsible for the Unity source code product infrastructure, working with legal and sales to streamline processes, ensure license compliance, and to iterate on product offerings.</p>
+<p><span>2015–2017</span> Responsible for the Unity source code product infrastructure, working with legal and sales to streamline processes, ensure license compliance, and iterate on product offerings.</p>
 <p><span>2015–2016</span> Technical release manager: Shepherding R&amp;D developers and their code through the Unity engine development processes. Contributing to our internal Mercurial version control service (a highly customized <a href="https://kallithea-scm.org/">Kallithea</a> installation).</p>
 </article></div>
 <div class="splash" style="background: #55789e url(portfolio/s-tog-i-regnvejr-nicolai-perjesi-dsb.jpg) 70% 40%;"><span>Photo: Nicolai Perjesi / DSB</span></div>
@@ -271,7 +271,7 @@ The Airlink communications platform powers railways worldwide, including the Cop
 <li><a href="https://github.com/kohler/click/pulls?q=is%3Apr+is%3Aclosed+author%3Akwi-dk">(more PRs)</a></li>
 </ul>
 <p><span>2012–2015</span> Test and tools development lead; spearheaded comprehensive test automation project.</p>
-<p>When I joined the Airlink software department, the job was characterized by month long test sprints, interrupted only by brief periods of development. In an effort to change this unsustainable test/development balance, I spearheaded the development of a fully automated test solution, comprised of the following elements:</p>
+<p>When I joined the Airlink software department, the job was characterized by month long test sprints, interrupted only by brief periods of development. In an effort to change this unsustainable test/development balance, I championed the development of a fully automated test solution, comprised of the following elements:</p>
 <ul>
 <li>
 <p>A custom software-defined networking solution based on <a href="https://github.com/kohler/click/">Click</a> bridging physical and virtual hardware, and emulating the complex network setups found in production Airlink systems.</p>
